@@ -1,0 +1,23 @@
+tello/control/joy_teleop:
+  ros__parameters:
+    # require_enable_button: false
+
+    # Takeoff/Land
+    arm:
+      type: topic
+      interface_type: std_msgs/msg/String
+      topic_name: /tello/control/arm
+      deadman_buttons: [0]
+      message_value:
+        data:
+          value: 'Takeoff/Land'
+
+    # Emergency stop
+    estop:
+      type: topic
+      interface_type: std_msgs/msg/String
+      topic_name: /tello/control/e_stop
+      deadman_buttons: [1]
+      message_value:
+        data:
+          value: 'Emergency stop'
