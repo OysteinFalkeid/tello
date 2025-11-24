@@ -81,14 +81,30 @@ class Estimator(Node):
     def pose_to_matrix(self, pose: Pose):
         """Convert geometry_msgs/Pose → 4x4 transform matrix."""
         trans = tf_transformations.translation_matrix(
-            [pose.position.x, pose.position.y, pose.position.z]
+            [pose.position.x, 
+             pose.position.y, 
+             pose.position.z]
         )
-        rot = tf_transformations.quaternion_matrix(
-            [pose.orientation.x,
+
+        q = [
+            pose.orientation.x,
             pose.orientation.y,
             pose.orientation.z,
-            pose.orientation.w]
-        )
+            pose.orientation.w
+        ]
+
+        # Convert quaternion → Euler angles
+        roll, pitch, yaw = tf_transformations.euler_from_quaternion(q)
+
+        # Zero roll, pitch
+        roll = 0.0
+        pitch = 0.0
+
+        # Recompute quaternion from yaw-only rotation
+        q_z_only = tf_transformations.quaternion_from_euler(roll, pitch, yaw)
+
+        rot = tf_transformations.quaternion_matrix(q_z_only)
+
         return trans @ rot
 
     def matrix_to_pose(self, T: np.ndarray):
@@ -141,20 +157,22 @@ class Estimator(Node):
                         pose_estimaton = self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key])
                         pose_estimation_list.append(pose_estimaton)
 
-                message = PoseWithCovarianceStamped()
-                message.header.frame_id = "odom"
-                message.header.stamp = msg.header.stamp
-                message.pose.pose = self.matrix_to_pose(pose_estimation_list[0])
-                message.pose.covariance = (np.array([
-                    [0.25,     0,        0,        0,         0,         0      ],
-                    [0,        0.25,     0,        0,         0,         0      ],
-                    [0,        0,        1.0,      0,         0,         0      ],
-                    [0,        0,        0,        0.0304,    0,         0      ],
-                    [0,        0,        0,        0,         0.0304,    0      ],
-                    [0,        0,        0,        0,         0,         0.1212 ]
-                    ]) * 1).flatten().tolist()
-                
-                self.publisher_pose.publish(message)
+                for estimation in pose_estimation_list:
+
+                    message = PoseWithCovarianceStamped()
+                    message.header.frame_id = "odom"
+                    message.header.stamp = msg.header.stamp
+                    message.pose.pose = self.matrix_to_pose(estimation)
+                    message.pose.covariance = (np.array([
+                        [1.0,      0,        0,        0,         0,         0      ],
+                        [0,        1.0,      0,        0,         0,         0      ],
+                        [0,        0,        1.0,      0,         0,         0      ],
+                        [0,        0,        0,        0.01,    0,         0      ],
+                        [0,        0,        0,        0,         0.01,    0      ],
+                        [0,        0,        0,        0,         0,         1.0    ]
+                        ]) * np.linalg.norm(np.array([pose_estimaton[0, 3], pose_estimaton[1, 3], pose_estimaton[2, 3]]))).astype(float).flatten().tolist()
+                    
+                    self.publisher_pose.publish(message)
 
 
             except Exception as e:

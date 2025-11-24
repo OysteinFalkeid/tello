@@ -37,6 +37,12 @@ def generate_launch_description():
         'aruco_tracker_config.yaml'
         ])
     
+    aruco_map_params = PathJoinSubstitution([
+        get_package_share_directory("drone"),
+        "params",
+        "example_map.yaml",
+    ])
+
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -92,9 +98,6 @@ def generate_launch_description():
         name='ekf_filter_node',
         namespace="tello/control",
         output='screen',
-        # remappings=[
-        #     ("cmd_vel", "joy/cmd_vel")
-        # ],
         parameters=[localization_config],
         )
 
@@ -105,6 +108,14 @@ def generate_launch_description():
         output="screen",
         arguments=["0","0","0","0","0","0","map","odom"]
         )
+    
+    odom_transform_node = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="map_transform",
+        output="screen",
+        arguments=["0","0","0","0","0","0","odom","base_link"]
+        )
 
     aruco_tracker_node = Node(
             package='aruco_opencv',
@@ -114,12 +125,6 @@ def generate_launch_description():
             output='screen',            
             parameters=[aruco_tracker_params],
         )
-
-    aruco_map_params = PathJoinSubstitution([
-        get_package_share_directory("drone"),
-        "params",
-        "example_map.yaml",
-    ])
 
     aruco_opencv_map_publisher_node = Node(
         package="aruco_opencv_map",
@@ -147,9 +152,6 @@ def generate_launch_description():
         name="pid_controller",
         namespace="tello/control",
         output="screen",
-        # remappings=[
-        #     ("pose0_landmarks", "control/pose0_landmarks")
-        # ]
     )
 
 
@@ -162,6 +164,7 @@ def generate_launch_description():
         robot_localization_node,
         aruco_tracker_node,
         map_transform_node,
+        odom_transform_node,
         aruco_opencv_map_publisher_node,
         pose_estimator_node,
         pid_controller_node,
