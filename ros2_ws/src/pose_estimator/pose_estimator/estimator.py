@@ -6,6 +6,7 @@ from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import TwistStamped, TwistWithCovarianceStamped, Pose, PoseWithCovarianceStamped, PoseStamped
 from std_msgs.msg import Header, String
 from sensor_msgs.msg import Image, CameraInfo
+from nav_msgs.msg import Odometry
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 from aruco_opencv_msgs.msg import ArucoDetection, MarkerPose, BoardPose
 import tf2_ros
@@ -45,6 +46,10 @@ class Estimator(Node):
         self.markers_map: dict[int, np.ndarray] = {}
         self.markers_odom_detected: dict[int, np.ndarray] = {}
 
+
+        matrix = self.pose_to_matrix(Pose())
+        self.odometry_matrix = matrix
+
         self.publisher_pose = self.create_publisher(
              msg_type=PoseWithCovarianceStamped,
              topic="pose0_landmarks",
@@ -67,6 +72,15 @@ class Estimator(Node):
             topic="aruco_detections_map",
             qos_profile=QoSProfile(depth=10),
             callback=self.get_map,
+            callback_group=MutuallyExclusiveCallbackGroup()
+        )
+
+        #subscribe odometry filteres
+        self.create_subscription(
+            msg_type=Odometry,
+            topic="control/odometry/filtered",
+            qos_profile=QoSProfile(depth=10),
+            callback=self.subscribe_to_odometry_filtered,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
@@ -129,6 +143,10 @@ class Estimator(Node):
         self.pose.header.stamp = self.get_clock().now().to_msg()
         self.publisher_pose.publish(self.pose)
 
+    def subscribe_to_odometry_filtered(self, msg: Odometry):
+        matrix = self.pose_to_matrix(msg.pose.pose)
+        self.odometry_matrix = matrix
+
     def get_detections(self, msg: ArucoDetection):
         markers: list[MarkerPose] = msg.markers
 
@@ -154,7 +172,7 @@ class Estimator(Node):
 
                 for key in self.markers_odom_detected.keys():
                     if key in self.markers_map.keys():
-                        pose_estimaton = self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key])
+                        pose_estimaton = self.odometry_matrix @ (self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key]))
                         pose_estimation_list.append(pose_estimaton)
 
                 for estimation in pose_estimation_list:

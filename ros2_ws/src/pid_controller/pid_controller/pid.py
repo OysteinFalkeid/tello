@@ -151,8 +151,8 @@ class PID(Node):
 
         self.twist_array_P = self.twist_array
         # self.twist_array_P = np.array([x, y, z, psi]).astype(float)
-        # self.twist_array_D = (self.twist_array_1 - self.twist_array) * self.delta_time
-        # self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
+        self.twist_array_D = (self.twist_array - self.twist_array_1) * self.delta_time
+        self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
 
         # for i, value in enumerate(self.twist_array_I):
         #     if value > 0.2:

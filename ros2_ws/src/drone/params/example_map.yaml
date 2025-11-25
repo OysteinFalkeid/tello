@@ -2,7 +2,7 @@ tello/aruco_opencv_map:
   ros__parameters:
     header:
       frame_id: odom
-    markers: [1]
+    markers: [0, 1]
 
     # marker_0:
     #   pose:
@@ -16,17 +16,17 @@ tello/aruco_opencv_map:
     #       z: -0.270598050
     #       w:  0.653281482
     
-    # marker_0:
-    #   pose:
-    #     position:
-    #       x: 1.5
-    #       y: 0.6
-    #       z: 0.89
-    #     orientation:
-    #       x: 0.5
-    #       y: -0.5
-    #       z: -0.5
-    #       w: 0.5
+    marker_0:
+      pose:
+        position:
+          x: 1.5
+          y: 0.6
+          z: 0.89
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
 
     marker_1:
       pose:
