@@ -158,7 +158,7 @@ class API(Node):
 
         #ping frame from tello
         self.create_timer(
-            timer_period_sec=0.1,
+            timer_period_sec=0.08,
             callback=self.get_frame,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -179,7 +179,7 @@ class API(Node):
 
         #ping hight from tello
         self.create_timer(
-            timer_period_sec=0.01,
+            timer_period_sec=0.1,
             callback=self.get_hight,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -312,22 +312,23 @@ class API(Node):
 
     def get_hight(self):
         z = self.tello.get_height() / 100.0
-        message = PoseWithCovarianceStamped()
-        message.header.frame_id = "odom"
-        message.header.stamp = self.get_clock().now().to_msg()
+        if z > 0.01:
+            message = PoseWithCovarianceStamped()
+            message.header.frame_id = "odom"
+            message.header.stamp = self.get_clock().now().to_msg()
 
-        message.pose.pose.position.z = z
+            message.pose.pose.position.z = z
 
-        message.pose.covariance = np.array([
-            [0.01, 0.0, 0.0, 0.0,  0.0,  0.0],
-            [0.0, 0.01, 0.0, 0.0,  0.0,  0.0],
-            [0.0, 0.0, 0.5, 0.0,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.01,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.0,  0.01],
-        ]).flatten().tolist()
+            message.pose.covariance = np.array([
+                [10.0, 0.0, 0.0, 0.0,  0.0,  0.0],
+                [0.0, 10.0, 0.0, 0.0,  0.0,  0.0],
+                [0.0, 0.0, 10.0, 0.0,  0.0,  0.0],
+                [0.0, 0.0, 0.0, 10.0,  0.0,  0.0],
+                [0.0, 0.0, 0.0, 0.0,  10.0,  0.0],
+                [0.0, 0.0, 0.0, 0.0,  0.0,  10.0],
+            ]).flatten().tolist()
 
-        self.publisher_hight.publish(message)
+            self.publisher_hight.publish(message)
 
     def subscribe_twist(self, msg: TwistStamped):
 

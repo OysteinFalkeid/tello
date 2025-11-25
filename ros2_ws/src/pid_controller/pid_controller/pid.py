@@ -31,7 +31,7 @@ class PID(Node):
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-        self.goal_pose.pose.position.z = 0.7
+        self.goal_pose.pose.position.z = 0.89
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self, spin_thread=True)
@@ -61,11 +61,11 @@ class PID(Node):
             qos_profile=QoSProfile(depth=10),
         )
 
-        self.create_timer(
-            timer_period_sec=5,
-            callback=self.test_pid,
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # self.create_timer(
+        #     timer_period_sec=5,
+        #     callback=self.test_pid,
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
 
         self.create_subscription(
             msg_type=Odometry,
@@ -160,13 +160,13 @@ class PID(Node):
         #     elif value < -0.2:
         #         self.twist_array_I[i] = -0.2
 
-        self.twist_array_PID = self.twist_array_P * 0.15 * 4# + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
+        self.twist_array_PID = self.twist_array_P * 0.15# + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
 
         for i, value in enumerate(self.twist_array_PID):
-            if value > 0.8:
-                self.twist_array_PID[i] = 0.8
-            elif value < -0.8:
-                self.twist_array_PID[i] = -0.8
+            if value > 0.4:
+                self.twist_array_PID[i] = 0.4
+            elif value < -0.4:
+                self.twist_array_PID[i] = -0.4
         
         # self.get_logger().info(f"{self.twist_array_PID}")
         message = TwistStamped()
@@ -196,7 +196,7 @@ class PID(Node):
         self.x_test = self.x_test * -1
         self.z_test = self.z_test * -1
         self.goal_pose.pose.position.x = self.x_test
-        self.goal_pose.pose.position.z = 0.7 #self.z_test
+        self.goal_pose.pose.position.z = 0.89 #self.z_test
 
 
 

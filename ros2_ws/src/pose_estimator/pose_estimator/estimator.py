@@ -164,13 +164,13 @@ class Estimator(Node):
                     message.header.stamp = msg.header.stamp
                     message.pose.pose = self.matrix_to_pose(estimation)
                     message.pose.covariance = (np.array([
-                        [1.0,      0,        0,        0,         0,         0      ],
-                        [0,        1.0,      0,        0,         0,         0      ],
-                        [0,        0,        1.0,      0,         0,         0      ],
-                        [0,        0,        0,        0.01,    0,         0      ],
-                        [0,        0,        0,        0,         0.01,    0      ],
-                        [0,        0,        0,        0,         0,         1.0    ]
-                        ]) * np.linalg.norm(np.array([pose_estimaton[0, 3], pose_estimaton[1, 3], pose_estimaton[2, 3]]))).astype(float).flatten().tolist()
+                        [10.0,      0,        0,        0,         0,         0      ],
+                        [0,        10.0,      0,        0,         0,         0      ],
+                        [0,        0,        10.0,      0,         0,         0      ],
+                        [0,        0,        0,        10.0,        0,         0     ],
+                        [0,        0,        0,        0,         10.0,        0     ],
+                        [0,        0,        0,        0,         0,         10.0    ]
+                        ]) * (np.sum(np.array([pose_estimaton[0, 3], pose_estimaton[1, 3], pose_estimaton[2, 3]])) / 3)).astype(float).flatten().tolist()
                     
                     self.publisher_pose.publish(message)
 
