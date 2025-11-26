@@ -1,0 +1,198 @@
+tello/aruco_opencv_map:
+  ros__parameters:
+    header:
+      frame_id: odom
+    # markers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 18]
+    markers: [1, 2, 3, 4, 5, 8]
+
+    # marker_0:
+    #   pose:
+    #     position:
+    #       x: 1.0
+    #       y: 0.0
+    #       z: -0.4
+    #     orientation:
+    #       x: -0.270598050
+    #       y: -0.653281482
+    #       z: -0.270598050
+    #       w:  0.653281482
+    
+    marker_1:
+      pose:
+        position:
+          x: 0.90
+          y: 0.00
+          z: 1.10
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_2:
+      pose:
+        position:
+          x: 2.14
+          y: 0.56
+          z: 1.00
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_3:
+      pose:
+        position:
+          x: 2.14
+          y: 0.00
+          z: 1.30
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_4:
+      pose:
+        position:
+          x: 2.14
+          y: -0.56
+          z: 1.60
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_5:
+      pose:
+        position:
+          x: 3.16
+          y: 0.0
+          z: 1.21
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    # marker_6:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_7:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    marker_8:
+      pose:
+        position:
+          x: 3.16
+          y: 0.0
+          z: 0.54
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    # marker_9:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_10:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_11:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_12:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_13:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_15:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5
+
+    # marker_18:
+    #   pose:
+    #     position:
+    #       x: 2.5
+    #       y: 0.0
+    #       z: 0.89
+    #     orientation:
+    #       x: 0.5
+    #       y: -0.5
+    #       z: -0.5
+    #       w: 0.5

@@ -18,6 +18,7 @@ import sys
 import cv2
 import numpy as np
 from cv_bridge import CvBridge
+import math
 
 
 
@@ -188,7 +189,7 @@ class Estimator(Node):
                         [0,        0,        0,        10.0,        0,         0     ],
                         [0,        0,        0,        0,         10.0,        0     ],
                         [0,        0,        0,        0,         0,         10.0    ]
-                        ]) * (np.sum(np.array([pose_estimaton[0, 3], pose_estimaton[1, 3], pose_estimaton[2, 3]])) / 3)).astype(float).flatten().tolist()
+                        ]) * math.sqrt(np.sum(np.array([pose_estimaton[0, 3]**2, pose_estimaton[1, 3]**2, pose_estimaton[2, 3]**2]))) * 4).astype(float).flatten().tolist()
                     
                     self.publisher_pose.publish(message)
 

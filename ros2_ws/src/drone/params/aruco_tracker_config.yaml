@@ -13,7 +13,7 @@ tello/aruco_tracker:
       depth: 1
 
     publish_tf: true
-    marker_size: 0.1
+    marker_size: 0.08
 
     # Dynamically reconfigurable Detector parameters
     # https://docs.opencv.org/4.2.0/d5/dae/tutorial_aruco_detection.html

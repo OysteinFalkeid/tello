@@ -37,10 +37,16 @@ def generate_launch_description():
         'aruco_tracker_config.yaml'
         ])
     
+    # aruco_map_params = PathJoinSubstitution([
+    #     get_package_share_directory("drone"),
+    #     "params",
+    #     "example_map.yaml",
+    # ])
+
     aruco_map_params = PathJoinSubstitution([
         get_package_share_directory("drone"),
         "params",
-        "example_map.yaml",
+        "competition_map_config.yaml",
     ])
 
     rviz2_node = Node(

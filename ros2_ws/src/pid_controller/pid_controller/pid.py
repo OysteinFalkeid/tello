@@ -25,13 +25,14 @@ class PID(Node):
     def __init__(self):
         super().__init__("PID")
 
-        self.x_test = 0.1
+        self.x_test = 0.0
         self.z_test = 0.0
         
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-        self.goal_pose.pose.position.z = 0.89
+        self.goal_pose.pose.position.x = 0.0
+        self.goal_pose.pose.position.z = 1.25
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self, spin_thread=True)
@@ -62,7 +63,7 @@ class PID(Node):
         )
 
         # self.create_timer(
-        #     timer_period_sec=5,
+        #     timer_period_sec=20,
         #     callback=self.test_pid,
         #     callback_group=MutuallyExclusiveCallbackGroup()
         # )
@@ -136,7 +137,7 @@ class PID(Node):
 
         x = goal_pose.pose.position.x * 1.0
         y = goal_pose.pose.position.y * 1.0
-        z = goal_pose.pose.position.z * 1.0
+        z = goal_pose.pose.position.z * 2.0
 
 
         psi = self.pose_to_psi(goal_pose.pose) / math.pi
@@ -154,11 +155,11 @@ class PID(Node):
         self.twist_array_D = (self.twist_array - self.twist_array_1) * self.delta_time
         self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
 
-        # for i, value in enumerate(self.twist_array_I):
-        #     if value > 0.2:
-        #         self.twist_array_I[i] = 0.2
-        #     elif value < -0.2:
-        #         self.twist_array_I[i] = -0.2
+        for i, value in enumerate(self.twist_array_I):
+            if value > 0.15:
+                self.twist_array_I[i] = 0.15
+            elif value < -0.15:
+                self.twist_array_I[i] = -0.15
 
         self.twist_array_PID = self.twist_array_P * 0.15# + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
 
@@ -196,7 +197,7 @@ class PID(Node):
         self.x_test = self.x_test * -1
         self.z_test = self.z_test * -1
         self.goal_pose.pose.position.x = self.x_test
-        self.goal_pose.pose.position.z = 0.89 #self.z_test
+        self.goal_pose.pose.position.z = 1.35 #self.z_test
 
 
 

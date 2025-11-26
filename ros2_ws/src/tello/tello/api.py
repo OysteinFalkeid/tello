@@ -121,6 +121,7 @@ class API(Node):
             qos_profile=QoSProfile(depth=1),
             callback_group=MutuallyExclusiveCallbackGroup()
         )
+        
         # Twist
         self.create_subscription(
             msg_type=TwistStamped,
@@ -179,7 +180,7 @@ class API(Node):
 
         #ping hight from tello
         self.create_timer(
-            timer_period_sec=0.1,
+            timer_period_sec=0.03,
             callback=self.get_hight,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -355,8 +356,9 @@ class API(Node):
             self.flying = False
         else:
             self.tello.takeoff()
-            self.flying = True
+            self.tello.move_up(20)
             time.sleep(1.0)
+            self.flying = True
             self.takeoff = True
 
     def e_stop(self, msg: String):

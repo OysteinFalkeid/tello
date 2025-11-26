@@ -4,7 +4,7 @@ tello/control/ekf_filter_node:
         # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
         # computation until it receives at least one message from one of the inputs. It will then run continuously at the
         # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-        frequency: 10.0
+        frequency: 20.0
 
         # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
         # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
@@ -95,7 +95,7 @@ tello/control/ekf_filter_node:
                         false, false, false,
                         false, false, false,
                         false, false, false]
-        pose1_queue_size: 4
+        pose1_queue_size: 1
 
         # # if optical flow is bad the sped is 0.0 no mater the actual speed of the drone
         # twist0: twist0_velocity
