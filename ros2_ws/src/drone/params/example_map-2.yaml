@@ -1,0 +1,47 @@
+  #marker_map.yaml
+
+- marker_id: 1                      # x:fwd, y:left, z:up
+  position: [0.91, 0.0, 1.08]
+  ypr: [-90, 0, 90]
+- marker_id: 2
+  position: [2.12, 0.5, 1.0]
+  ypr: [-90, 0, 90]
+- marker_id: 3
+  position: [2.10, 0.0, 1.3]
+  ypr: [-90, 0, 90]
+- marker_id: 4
+  position: [2.12, -0.5 ,1.6]
+  ypr: [-90, 0, 90]
+- marker_id: 5
+  position: [ 3.10, 0.0, 1.20]
+  ypr: [-90, 0, 90]
+- marker_id: 8
+  position: [3.12, 0.0 ,0.55]
+  ypr: [-90, 0, 90]
+- marker_id: 13
+  position: [3.9, 0.0, 0.96]
+  ypr: [-90, 0, 90]
+- marker_id: 15
+  position: [4.7, 0.0, 0.90]
+  ypr: [-90, 0, 90]
+- marker_id: 6
+  position: [7.55, 0.0 ,1.0] 
+  ypr: [-90, 0, 90]
+- marker_id: 7
+  position: [6.41, 0.0, 0.78]
+  ypr: [-270, 0, 90]
+- marker_id: 9
+  position: [7.49, -0.35, 0.78]
+  ypr: [-90, 0, 90]
+- marker_id: 10
+  position: [6.21, 0.18, 0.78]
+  ypr: [-180, 0, 90]
+- marker_id: 11
+  position: [6.02, 0.0, 0.78]
+  ypr: [-90, 0, 90]
+- marker_id: 12
+  position: [6.21, -0.18, 0.78]
+  ypr: [0, 0, 90]
+- marker_id: 18
+  position: [7.49, 0.35, 0.78]
+  ypr: [-90, 0, 90]
