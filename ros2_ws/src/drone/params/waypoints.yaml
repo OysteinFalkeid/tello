@@ -1,0 +1,272 @@
+waypoint_1:
+  pose:
+    position:
+    	x: 0.0
+    	y: 0.0
+    	z: 1.3
+    orientation:
+      yaw: 0
+
+waypoint_2:
+  pose:
+    position:
+    	x: 1.5
+    	y: 0.0
+    	z: 1.3
+    orientation:
+      yaw: 0
+
+waypoint_3:
+  pose:
+    position:
+    	x: 1.5
+    	y: 0.0
+    	z: 0.6
+    orientation:
+      yaw: 0
+
+waypoint_4:
+  pose:
+    position:
+    	x: 2.6
+    	y: 0.0
+    	z: 0.6
+    orientation:
+      yaw: 0
+
+waypoint_5:
+  pose:
+    position:
+    	x: 2.6
+    	y: 0.0
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_6:
+  pose:
+    position:
+    	x: 1.5
+    	y: 0.0
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_7:
+  pose:
+    position:
+    	x: 1.5
+    	y: 0.0
+    	z: 1.6
+    orientation:
+      yaw: 0
+
+waypoint_8:
+  pose:
+    position:
+    	x: 2.6
+    	y: 0.0
+    	z: 1.6
+    orientation:
+      yaw: 0
+
+# Zigzag
+waypoint_9:
+  pose:
+    position:
+    	x: 2.6
+    	y: 0.0
+    	z: 1.2
+    orientation:
+      yaw: 0
+
+waypoint_10:
+  pose:
+    position:
+    	x: 2.6
+    	y: 0.5
+    	z: 1.2
+    orientation:
+      yaw: 30
+
+waypoint_11:
+  pose:
+    position:
+    	x: 3.4
+    	y: 0.5
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_12:
+  pose:
+    position:
+    	x: 3.4
+    	y: 0.0
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_13:
+  pose:
+    position:
+    	x: 3.4
+    	y: -0.5
+    	z: 1.0
+    orientation:
+      yaw: -30
+
+waypoint_14:
+  pose:
+    position:
+    	x: 4.2
+    	y: -0.5
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_15:
+  pose:
+    position:
+    	x: 4.2
+    	y: 0.0
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_16:
+  pose:
+    position:
+    	x: 4.2
+    	y: 0.5
+    	z: 1.0
+    orientation:
+      yaw: 30
+
+waypoint_17:
+  pose:
+    position:
+    	x: 5.3
+    	y: 0.5
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_18:
+  pose:
+    position:
+    	x: 5.3
+    	y: 0.0
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+waypoint_19:
+  pose:
+    position:
+    	x: 5.5
+    	y: 0.0
+    	z: 1.0
+    orientation:
+      yaw: 0
+
+# Circle pattern
+waypoint_20:
+  pose:
+    position:
+    	x: 5.5
+    	y: 0.0
+    	z: 0.8
+    orientation:
+      yaw: 0
+
+waypoint_21:
+  pose:
+    position:
+    	x: 5.5
+    	y: 0.7
+    	z: 0.8
+    orientation:
+      yaw: 45
+
+waypoint_22:
+  pose:
+    position:
+    	x: 6.2
+    	y: 0.7
+    	z: 0.8
+    orientation:
+      yaw: 90
+
+waypoint_23:
+  pose:
+    position: 
+    	x: 6.9
+    	y: 0.7
+    	z: 0.8
+    orientation:
+      yaw: 135
+
+waypoint_24:
+  pose:
+    position:
+    	x: 6.9
+    	y: 0.0
+    	z: 0.8
+    orientation:
+      yaw: 180
+
+waypoint_25:
+  pose:
+    position:
+    	x: 6.9
+    	y: -0.5
+    	z: 0.8
+    orientation:
+      yaw: 225
+
+waypoint_26:
+  pose:
+    position:
+    	x: 6.2
+    	y: -0.5
+    	z: 0.8
+    orientation:
+      yaw: 270
+
+waypoint_27:
+  pose:
+    position:
+    	x: 5.5
+    	y: -0.5
+    	z: 0.8
+    orientation:
+      yaw: 315
+
+waypoint_28:
+  pose:
+    position:
+    	x: 5.5
+    	y: 0.0
+    	z: 0.8
+    orientation:
+      yaw: 0
+
+waypoint_29:
+  pose:
+    position:
+    	x: 5.5
+    	y: 0.0
+    	z: 1.2
+    orientation:
+      yaw: 0
+
+waypoint_30:
+  pose:
+    position:
+    	x: 7.1
+    	y: 0.0
+    	z: 1.2
+    orientation:
+      yaw: 0
+
