@@ -83,6 +83,13 @@ class PID(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
+        self.publisher_error = self.create_publisher(
+            msg_type=PoseStamped,
+            topic="pid_error",
+            qos_profile=QoSProfile(depth=1),
+            callback_group=MutuallyExclusiveCallbackGroup()
+        )
+
         self.create_timer(
             timer_period_sec=0.05,
             callback=self.get_transform,
@@ -135,6 +142,7 @@ class PID(Node):
 
         goal_pose: PoseStamped = tf2_geometry_msgs.do_transform_pose_stamped(self.goal_pose, self.transform)
 
+        self.publisher_error.publish(goal_pose)
         x = goal_pose.pose.position.x * 1.0
         y = goal_pose.pose.position.y * 1.0
         z = goal_pose.pose.position.z * 2.0
