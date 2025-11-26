@@ -25,14 +25,15 @@ class PID(Node):
     def __init__(self):
         super().__init__("PID")
 
-        self.x_test = 0.0
+        self.x_test = 0.1
         self.z_test = 0.0
+        
         
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-        self.goal_pose.pose.position.x = 0.0
-        self.goal_pose.pose.position.z = 1.25
+        self.goal_pose.pose.position.z = 1.0
+        self.goal_pose.pose.position.x = 1.0
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self, spin_thread=True)
@@ -45,6 +46,23 @@ class PID(Node):
         self.twist_array_D = np.array([0, 0, 0, 0]).astype(float)
         self.twist_array_I = np.array([0, 0, 0, 0]).astype(float)
         self.filter_index= 0
+
+        ##########
+        self.z_low = 0.2
+        self.z_high = -0.2
+        self.z_toggle = False
+
+        # Gains per axis: [x, y, z, yaw]
+        self.Kp = np.array([0.25, 0.05, 1.5, 0.0], dtype=float)
+        self.Kd = np.array([0.02, 0.02, 0.2, 0.0], dtype=float)
+        self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
+        # z between 110 and 130 isntead of 70 to 90
+
+        self.error_prev = np.zeros(4, dtype=float)
+        self.error_int  = np.zeros(4, dtype=float)
+
+        self.u_max = np.array([0.2, 0.2, 0.2, 0.8], dtype=float)  # cmd_vel limits
+        ##########
 
         self.wait_for_transform("odom", "base_link")
         self.transform = self.tf_buffer.lookup_transform(
@@ -63,7 +81,7 @@ class PID(Node):
         )
 
         # self.create_timer(
-        #     timer_period_sec=20,
+        #     timer_period_sec=5,
         #     callback=self.test_pid,
         #     callback_group=MutuallyExclusiveCallbackGroup()
         # )
@@ -79,13 +97,6 @@ class PID(Node):
         self.publisher_cmd_vel = self.create_publisher(
             msg_type=TwistStamped,
             topic="cmd_vel",
-            qos_profile=QoSProfile(depth=1),
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
-
-        self.publisher_error = self.create_publisher(
-            msg_type=PoseStamped,
-            topic="pid_error",
             qos_profile=QoSProfile(depth=1),
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -142,10 +153,9 @@ class PID(Node):
 
         goal_pose: PoseStamped = tf2_geometry_msgs.do_transform_pose_stamped(self.goal_pose, self.transform)
 
-        self.publisher_error.publish(goal_pose)
         x = goal_pose.pose.position.x * 1.0
         y = goal_pose.pose.position.y * 1.0
-        z = goal_pose.pose.position.z * 2.0
+        z = goal_pose.pose.position.z * 1.0
 
 
         psi = self.pose_to_psi(goal_pose.pose) / math.pi
@@ -158,39 +168,98 @@ class PID(Node):
 
         self.twist_array = np.sum(self.twist_array_filter, axis=0) / 3
 
-        self.twist_array_P = self.twist_array
-        # self.twist_array_P = np.array([x, y, z, psi]).astype(float)
-        self.twist_array_D = (self.twist_array - self.twist_array_1) * self.delta_time
-        self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
+        # error in base_link frame
+        error = self.twist_array  # [ex, ey, ez, epsi]
 
-        for i, value in enumerate(self.twist_array_I):
-            if value > 0.15:
-                self.twist_array_I[i] = 0.15
-            elif value < -0.15:
-                self.twist_array_I[i] = -0.15
+        # -----------------------
+        # DEADBand for x, y, z, yaw
+        deadband = np.array([0.05, 0.05, 0.05, 0.03], dtype=float)
+        for i in range(4):
+            if abs(error[i]) < deadband[i]:
+                error[i] = 0.0
+        # -----------------------
 
-        self.twist_array_PID = self.twist_array_P * 0.15# + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
+        # time step
+        sec, nanosec = self.get_clock().now().seconds_nanoseconds()
+        t_now = sec + nanosec * 1e-9
 
-        for i, value in enumerate(self.twist_array_PID):
-            if value > 0.4:
-                self.twist_array_PID[i] = 0.4
-            elif value < -0.4:
-                self.twist_array_PID[i] = -0.4
-        
-        # self.get_logger().info(f"{self.twist_array_PID}")
+
+        if not hasattr(self, "t_prev"):
+            self.t_prev = t_now
+            self.secunds = t_now
+            return  # skip first loop so dt is valid
+
+        dt = t_now - self.t_prev
+        self.t_prev = t_now
+        if dt <= 1e-5:
+            dt = 1e-3  # avoid crazy derivative
+
+        # --- PID terms ---
+
+        # P
+        P = self.Kp * error
+
+        # D  (derivative of error: (e - e_prev)/dt)
+        D = self.Kd * ((error - self.error_prev) / dt)
+        self.error_prev = error.copy()
+
+        # I with anti-windup
+        self.error_int += error * dt
+        # clamp integral
+        self.error_int = np.clip(self.error_int, -0.2, 0.2)
+        I = self.Ki * self.error_int
+
+        u = P + D + I
+
+        # saturate per axis
+        u = np.clip(u, -self.u_max, self.u_max)
+
+        # build message
         message = TwistStamped()
         message.header.frame_id = "base_link"
         message.header.stamp = msg.header.stamp
 
-        message.twist.linear.x = self.twist_array_PID[0]
-        message.twist.linear.y = self.twist_array_PID[1]
-        message.twist.linear.z = self.twist_array_PID[2]
-
-        message.twist.angular.z = self.twist_array_PID[3]
+        message.twist.linear.x  = float(u[0])
+        message.twist.linear.y  = float(u[1])
+        message.twist.linear.z  = float(u[2])
+        message.twist.angular.z = float(u[3])
 
         self.publisher_cmd_vel.publish(message)
 
-        self.twist_array_1 = self.twist_array
+
+        # self.twist_array_P = self.twist_array
+        # # self.twist_array_P = np.array([x, y, z, psi]).astype(float)
+        # # self.twist_array_D = (self.twist_array_1 - self.twist_array) * self.delta_time
+        # # self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
+
+        # # for i, value in enumerate(self.twist_array_I):
+        # #     if value > 0.2:
+        # #         self.twist_array_I[i] = 0.2
+        # #     elif value < -0.2:
+        # #         self.twist_array_I[i] = -0.2
+
+        # self.twist_array_PID = self.twist_array_P * 0.15 * 2 # + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
+
+        # for i, value in enumerate(self.twist_array_PID):
+        #     if value > 0.8:
+        #         self.twist_array_PID[i] = 0.8
+        #     elif value < -0.8:
+        #         self.twist_array_PID[i] = -0.8
+        
+        # # self.get_logger().info(f"{self.twist_array_PID}")
+        # message = TwistStamped()
+        # message.header.frame_id = "base_link"
+        # message.header.stamp = msg.header.stamp
+
+        # message.twist.linear.x = self.twist_array_PID[0]
+        # message.twist.linear.y = self.twist_array_PID[1]
+        # message.twist.linear.z = self.twist_array_PID[2]*2
+
+        # message.twist.angular.z = self.twist_array_PID[3]*2
+
+        # self.publisher_cmd_vel.publish(message)
+
+        # self.twist_array_1 = self.twist_array
 
     def pose_to_psi(self, pose: Pose):
         return math.atan2(2*(pose.orientation.w*pose.orientation.z + pose.orientation.x*pose.orientation.y), 1 - 2*(pose.orientation.y*pose.orientation.y + pose.orientation.z*pose.orientation.z))
@@ -198,14 +267,33 @@ class PID(Node):
     def subscribe_base_link(self, msg: Odometry):
         odometry_pose = msg.pose.pose
 
+    # def test_pid(self):
+    #     self.goal_pose = PoseStamped()
+    #     self.goal_pose.header.frame_id = "odom"
+    #     self.goal_pose.header.stamp = self.get_clock().now().to_msg()
+    #     self.x_test = self.x_test * -1
+    #     self.z_test = self.z_test * -1
+    #     self.goal_pose.pose.position.x = self.x_test
+    #     self.goal_pose.pose.position.z = 1.0 #self.z_test
+
     def test_pid(self):
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-        self.x_test = self.x_test * -1
-        self.z_test = self.z_test * -1
-        self.goal_pose.pose.position.x = self.x_test
-        self.goal_pose.pose.position.z = 1.35 #self.z_test
+
+        if self.z_toggle:
+            z_goal = self.z_low   # 0.8 m
+        else:
+            z_goal = self.z_high  # 0.9 m
+
+        self.z_toggle = not self.z_toggle
+
+        self.goal_pose.pose.position.x = z_goal
+        self.goal_pose.pose.position.y = 0.0
+        self.goal_pose.pose.position.z = 1.0
+        self.goal_pose.pose.orientation.w = 1.0
+
+        self.get_logger().info(f"New Z step goal: {z_goal:.2f} m")
 
 
 
