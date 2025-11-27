@@ -53,7 +53,7 @@ class PID(Node):
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 1.5, 1.0], dtype=float)
+        self.Kp = np.array([0.15, 0.15, 1.5, 0.8], dtype=float)
         self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
