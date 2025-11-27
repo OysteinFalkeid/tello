@@ -13,19 +13,19 @@ import yaml
 
 
 # Topics / frames
-GOAL_POSE_TOPIC      = '/tello/control/goal_pose'
-PID_ERROR_TOPIC      = 'tello/control/pid_error'
+GOAL_POSE_TOPIC      = '/goal_pose'
+PID_ERROR_TOPIC      = '/pid_error'
 FRAME_ID             = 'odom'
 
 # Publishing rate (seconds)
 PUBLISH_PERIOD       = 0.5
 
 # Stability logic
-STABLE_SAMPLES       = 5        # how many last readings must be below thresholds
-THRESH_X             = 0.15     # |error_x| < THRESH_X
-THRESH_Y             = 0.15     # |error_y| < THRESH_Y
-THRESH_Z             = 0.15     # |error_z| < THRESH_Z
-THRESH_TOTAL         = 0.20     # sqrt(x^2 + y^2 + z^2) < THRESH_TOTAL
+STABLE_SAMPLES       = 5        # how many readings must be below thresholds
+THRESH_X             = 0.15
+THRESH_Y             = 0.15
+THRESH_Z             = 0.15
+THRESH_TOTAL         = 0.25
 
 # Waypoint YAML location
 WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
