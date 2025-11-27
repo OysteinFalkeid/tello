@@ -20,7 +20,7 @@ tello/aruco_opencv_map:
         position:
           x: 0.0
           y: 0.0
-          z: 1.3
+          z: 1.25
         orientation:
           x: 0.0
           y: 0.0
@@ -32,7 +32,7 @@ tello/aruco_opencv_map:
         position:
           x: 1.5
           y: 0.0
-          z: 1.3
+          z: 1.25
         orientation:
           x: 0.0
           y: 0.0
@@ -133,7 +133,7 @@ tello/aruco_opencv_map:
         orientation:
           x: 0
           y: 0
-          z: -0.49999999999999994
+          z: 0.49999999999999994
           w: 0.9659258262890683
 
     waypoint_11:
@@ -145,7 +145,7 @@ tello/aruco_opencv_map:
         orientation:
           x: 0
           y: 0
-          z: -0.49999999999999994
+          z: 0.49999999999999994
           w: 0.9659258262890683
 
     waypoint_12:
@@ -169,7 +169,7 @@ tello/aruco_opencv_map:
         orientation:
           x: 0
           y: 0
-          z: 0.49999999999999994
+          z: -0.49999999999999994
           w: 0.9659258262890683
 
     waypoint_14:
@@ -181,7 +181,7 @@ tello/aruco_opencv_map:
         orientation:
           x: 0
           y: 0
-          z: 0.49999999999999994
+          z: -0.49999999999999994
           w: 0.9659258262890683
 
     waypoint_15:
@@ -205,7 +205,7 @@ tello/aruco_opencv_map:
         orientation:
           x: 0
           y: 0
-          z: -0.49999999999999994
+          z: 0.49999999999999994
           w: 0.9659258262890683
 
     waypoint_17:
@@ -217,7 +217,7 @@ tello/aruco_opencv_map:
         orientation:
           x: 0
           y: 0
-          z: -0.49999999999999994
+          z: 0.49999999999999994
           w: 0.9659258262890683
 
     waypoint_18:
