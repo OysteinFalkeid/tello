@@ -32,8 +32,8 @@ class PID(Node):
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-        self.goal_pose.pose.position.z = 1.0
-        self.goal_pose.pose.position.x = 1.0
+        self.goal_pose.pose.position.z = 0.0
+        self.goal_pose.pose.position.x = 0.0
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self, spin_thread=True)
@@ -48,13 +48,15 @@ class PID(Node):
         self.filter_index= 0
 
         ##########
-        self.z_low = 0.2
-        self.z_high = -0.2
+        self.z_low = 0.5
+        self.z_high = 0.3
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.25, 0.05, 1.5, 0.0], dtype=float)
-        self.Kd = np.array([0.02, 0.02, 0.2, 0.0], dtype=float)
+        self.Kp = np.array([0.15, 0.15, 1.5, 0.15], dtype=float)
+        self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
+        # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
+        # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
         self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
         # z between 110 and 130 isntead of 70 to 90
 
@@ -288,9 +290,9 @@ class PID(Node):
 
         self.z_toggle = not self.z_toggle
 
-        self.goal_pose.pose.position.x = z_goal
+        self.goal_pose.pose.position.x = 0.0
         self.goal_pose.pose.position.y = 0.0
-        self.goal_pose.pose.position.z = 1.0
+        self.goal_pose.pose.position.z = z_goal
         self.goal_pose.pose.orientation.w = 1.0
 
         self.get_logger().info(f"New Z step goal: {z_goal:.2f} m")

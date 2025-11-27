@@ -19,7 +19,7 @@ tello/aruco_opencv_map:
     marker_0:
       pose:
         position:
-          x: 2.5
+          x: 1.5
           y: 0.6
           z: 0.89
         orientation:
@@ -31,7 +31,7 @@ tello/aruco_opencv_map:
     marker_1:
       pose:
         position:
-          x: 2.5
+          x: 1.5
           y: 0.0
           z: 0.89
         orientation:
