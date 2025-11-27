@@ -181,7 +181,7 @@ class PosePublisherNode(Node):
         within_total = dist < self.THRESH_TOTAL
 
         is_stable = within_axes and within_total
-        
+
         if is_stable:
             self.stable_flags.append(is_stable)
 
@@ -196,7 +196,8 @@ class PosePublisherNode(Node):
             len(self.stable_flags) >= self.STABLE_SAMPLES and
             all(self.stable_flags)
         ):
-            self.advance_waypoint()
+            # self.advance_waypoint()
+            pass
 
     # def cmd_error_callback(self, msg: TwistStamped):
     #     """Store whether this error sample is within all thresholds."""
