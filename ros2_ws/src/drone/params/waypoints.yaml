@@ -1,5 +1,16 @@
 tello/aruco_opencv_map:
   ros__parameters:
+
+    thresh_x: 0.15
+    thresh_y: 0.15
+    thresh_z: 0.15
+
+
+    thresh_total: 0.20
+
+
+
+
     header:
       frame_id: odom
     waypoint: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]

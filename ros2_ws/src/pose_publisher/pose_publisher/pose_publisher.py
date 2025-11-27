@@ -7,7 +7,7 @@ from pathlib import Path
 
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Pose
 from ament_index_python.packages import get_package_share_directory
 import yaml
 
@@ -15,7 +15,7 @@ import yaml
 # Topics / frames
 GOAL_POSE_TOPIC      = '/tello/control/goal_pose'
 PID_ERROR_TOPIC      = 'tello/control/pid_error'
-FRAME_ID             = 'map'
+FRAME_ID             = 'odom'
 
 # Publishing rate (seconds)
 PUBLISH_PERIOD       = 0.5
@@ -34,7 +34,36 @@ WAYPOINT_FILE_REL    = 'params/waypoints.yaml'  # path inside that package
 
 class PosePublisherNode(Node):
     def __init__(self):
-        super().__init__('pose_publisher')
+        super().__init__('pose_publisher', allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
+
+        THRESH_X = self.get_parameter_or("thresh_x", THRESH_X).value
+        THRESH_Y = self.get_parameter_or("thresh_x", THRESH_Y).value
+        THRESH_Z = self.get_parameter_or("thresh_x", THRESH_Z).value
+        THRESH_TOTAL = self.get_parameter_or("thresh_x", THRESH_TOTAL).value
+
+        self.markers_id_list = self.get_parameter("waypoint").value
+        
+        self.waypoint_msg_list: list[PoseStamped] = []
+        frame_id = self.get_parameter("header.frame_id").value
+
+        waypoint_list: list[PoseStamped] = []
+        for id in self.markers_id_list:
+            waypoint = PoseStamped()
+            waypoint = PoseStamped()
+            waypoint.header.frame_id = frame_id
+            pose = Pose()
+            pose.position.x = self.get_parameter_or(f"marker_{id}.pose.position.x", 0.0).value
+            pose.position.y = self.get_parameter_or(f"marker_{id}.pose.position.y", 0.0).value
+            pose.position.z = self.get_parameter_or(f"marker_{id}.pose.position.z", 0.0).value
+            pose.orientation.x = self.get_parameter_or(f"marker_{id}.pose.orientation.x", 0.0).value
+            pose.orientation.y = self.get_parameter_or(f"marker_{id}.pose.orientation.y", 0.0).value
+            pose.orientation.z = self.get_parameter_or(f"marker_{id}.pose.orientation.z", 0.0).value
+            pose.orientation.w = self.get_parameter_or(f"marker_{id}.pose.orientation.w", 0.0).value
+            waypoint.pose = pose
+            waypoint_list.append(waypoint)
+
+        self.waypoint_msg_list = waypoint_list
+
 
         # Publisher for goal pose for the controller
         self.publisher_ = self.create_publisher(PoseStamped, GOAL_POSE_TOPIC, 10)
