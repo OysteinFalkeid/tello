@@ -27,6 +27,7 @@ tello/control/joy_teleop:
       type: topic
       interface_type: std_msgs/msg/String
       topic_name: /tello/control/next_waypoint
-      deadman_buttons: [1]
+      deadman_buttons: [2]
+      message_value:
         data:
           value: "next waypoint"

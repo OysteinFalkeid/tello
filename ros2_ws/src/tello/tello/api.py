@@ -356,8 +356,6 @@ class API(Node):
             self.flying = False
         else:
             self.tello.takeoff()
-            self.tello.move_up(20)
-            time.sleep(1.0)
             self.flying = True
             self.takeoff = True
 

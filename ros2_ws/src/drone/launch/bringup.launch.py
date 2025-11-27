@@ -162,7 +162,7 @@ def generate_launch_description():
 
 
     return LaunchDescription([
-        tello_api_node,
+        # tello_api_node,
         rviz2_node,
         joy_node,
         joy_teleop_node,
