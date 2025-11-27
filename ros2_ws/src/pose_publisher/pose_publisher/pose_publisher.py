@@ -46,7 +46,7 @@ class PosePublisherNode(Node):
         self.markers_id_list = self.get_parameter("waypoint").value
         
         self.waypoint_msg_list: list[PoseStamped] = []
-        frame_id = self.get_parameter("header.frame_id").value
+        frame_id = self.get_parameter_or("header.frame_id", FRAME_ID).value
 
         waypoint_list: list[PoseStamped] = []
         for id in self.markers_id_list:
@@ -70,10 +70,10 @@ class PosePublisherNode(Node):
         # Publisher for goal pose for the controller
         self.publisher_ = self.create_publisher(PoseStamped, GOAL_POSE_TOPIC, 10)
 
-        # Load waypoints from YAML
-        self.poses = self.load_waypoints()
-        if not self.poses:
-            self.get_logger().error('No waypoints loaded. Node will still run but publish nothing useful.')
+        # # Load waypoints from YAML
+        # self.poses = self.load_waypoints()
+        # if not self.poses:
+        #     self.get_logger().error('No waypoints loaded. Node will still run but publish nothing useful.')
         self.current_index = 0
 
         # Keep track of last N "is stable" results
@@ -189,28 +189,31 @@ class PosePublisherNode(Node):
 
     def timer_callback(self):
         """Publish current waypoint pose repeatedly."""
-        if not self.poses:
-            # nothing to do
-            return
+        # if not self.poses:
+        #     # nothing to do
+        #     return
 
-        # Index to last waypoint once finished
-        idx = min(self.current_index, len(self.poses) - 1)
-        wp = self.poses[idx]
+        # # Index to last waypoint once finished
+        # idx = min(self.current_index, len(self.poses) - 1)
+        # wp = self.poses[idx]
 
-        msg = PoseStamped()
+        # msg = PoseStamped()
+        # msg.header.stamp = self.get_clock().now().to_msg()
+        # msg.header.frame_id = FRAME_ID
+
+        # msg.pose.position.x = wp['x']
+        # msg.pose.position.y = wp['y']
+        # msg.pose.position.z = wp['z']
+
+        # # Convert yaw [deg] to quaternion
+        # yaw_rad = math.radians(wp['yaw_deg'])
+        # msg.pose.orientation.x = 0.0
+        # msg.pose.orientation.y = 0.0
+        # msg.pose.orientation.z = math.sin(yaw_rad / 2.0)
+        # msg.pose.orientation.w = math.cos(yaw_rad / 2.0)
+
+        msg = self.waypoint_msg_list[self.current_index]
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = FRAME_ID
-
-        msg.pose.position.x = wp['x']
-        msg.pose.position.y = wp['y']
-        msg.pose.position.z = wp['z']
-
-        # Convert yaw [deg] to quaternion
-        yaw_rad = math.radians(wp['yaw_deg'])
-        msg.pose.orientation.x = 0.0
-        msg.pose.orientation.y = 0.0
-        msg.pose.orientation.z = math.sin(yaw_rad / 2.0)
-        msg.pose.orientation.w = math.cos(yaw_rad / 2.0)
 
         self.publisher_.publish(msg)
         
