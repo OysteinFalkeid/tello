@@ -1,4 +1,4 @@
-tello/aruco_opencv_map:
+tello/control/pose_publisher:
   ros__parameters:
 
     thresh_x: 0.15

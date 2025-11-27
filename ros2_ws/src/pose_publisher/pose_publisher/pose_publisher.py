@@ -13,40 +13,41 @@ from ament_index_python.packages import get_package_share_directory
 import yaml
 
 
-# Topics / frames
-GOAL_POSE_TOPIC      = '/goal_pose'
-PID_ERROR_TOPIC      = '/pid_error'
-JOY_BUTTON_TOPIC     = '/next_waypoint'
-FRAME_ID             = 'odom'
-
-# Publishing rate (seconds)
-PUBLISH_PERIOD       = 0.5
-
-# Stability logic
-STABLE_SAMPLES       = 5        # how many readings must be below thresholds
-THRESH_X             = 0.15
-THRESH_Y             = 0.15
-THRESH_Z             = 0.15
-THRESH_TOTAL         = 0.25
-
-# Waypoint YAML location
-WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
-WAYPOINT_FILE_REL    = 'params/waypoints.yaml'  # path inside that package
 
 
 class PosePublisherNode(Node):
     def __init__(self):
         super().__init__('pose_publisher', allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
 
-        THRESH_X = self.get_parameter_or("thresh_x", THRESH_X).value
-        THRESH_Y = self.get_parameter_or("thresh_x", THRESH_Y).value
-        THRESH_Z = self.get_parameter_or("thresh_x", THRESH_Z).value
-        THRESH_TOTAL = self.get_parameter_or("thresh_x", THRESH_TOTAL).value
+        # Topics / frames
+        self.GOAL_POSE_TOPIC      = 'goal_pose'
+        self.PID_ERROR_TOPIC      = 'pid_error'
+        self.JOY_BUTTON_TOPIC     = 'next_waypoint'
+        self.FRAME_ID             = 'odom'
+
+        # Publishing rate (seconds)
+        self.PUBLISH_PERIOD       = 0.5
+
+        # Stability logic
+        self.STABLE_SAMPLES       = 5        # how many readings must be below thresholds
+        self.THRESH_X             = 0.15
+        self.THRESH_Y             = 0.15
+        self.THRESH_Z             = 0.15
+        self.THRESH_TOTAL         = 0.25
+
+        # Waypoint YAML location
+        self.WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
+        self.WAYPOINT_FILE_REL    = 'params/waypoints.yaml'  # path inside that package
+
+        self.THRESH_X = self.get_parameter_or("thresh_x", self.THRESH_X).value
+        self.THRESH_Y = self.get_parameter_or("thresh_x", self.THRESH_Y).value
+        self.THRESH_Z = self.get_parameter_or("thresh_x", self.THRESH_Z).value
+        self.THRESH_TOTAL = self.get_parameter_or("thresh_x", self.THRESH_TOTAL).value
 
         self.markers_id_list = self.get_parameter("waypoint").value
         
         self.waypoint_msg_list: list[PoseStamped] = []
-        frame_id = self.get_parameter_or("header.frame_id", FRAME_ID).value
+        frame_id = self.get_parameter_or("header.frame_id", self.FRAME_ID).value
 
         waypoint_list: list[PoseStamped] = []
         for id in self.markers_id_list:
@@ -54,13 +55,13 @@ class PosePublisherNode(Node):
             waypoint = PoseStamped()
             waypoint.header.frame_id = frame_id
             pose = Pose()
-            pose.position.x = self.get_parameter_or(f"marker_{id}.pose.position.x", 0.0).value
-            pose.position.y = self.get_parameter_or(f"marker_{id}.pose.position.y", 0.0).value
-            pose.position.z = self.get_parameter_or(f"marker_{id}.pose.position.z", 0.0).value
-            pose.orientation.x = self.get_parameter_or(f"marker_{id}.pose.orientation.x", 0.0).value
-            pose.orientation.y = self.get_parameter_or(f"marker_{id}.pose.orientation.y", 0.0).value
-            pose.orientation.z = self.get_parameter_or(f"marker_{id}.pose.orientation.z", 0.0).value
-            pose.orientation.w = self.get_parameter_or(f"marker_{id}.pose.orientation.w", 0.0).value
+            pose.position.x = self.get_parameter_or(f"waypoint_{id}.pose.position.x", 0.0).value
+            pose.position.y = self.get_parameter_or(f"waypoint_{id}.pose.position.y", 0.0).value
+            pose.position.z = self.get_parameter_or(f"waypoint_{id}.pose.position.z", 0.0).value
+            pose.orientation.x = self.get_parameter_or(f"waypoint_{id}.pose.orientation.x", 0.0).value
+            pose.orientation.y = self.get_parameter_or(f"waypoint_{id}.pose.orientation.y", 0.0).value
+            pose.orientation.z = self.get_parameter_or(f"waypoint_{id}.pose.orientation.z", 0.0).value
+            pose.orientation.w = self.get_parameter_or(f"waypoint_{id}.pose.orientation.w", 0.0).value
             waypoint.pose = pose
             waypoint_list.append(waypoint)
 
@@ -68,7 +69,7 @@ class PosePublisherNode(Node):
 
 
         # Publisher for goal pose for the controller
-        self.publisher_ = self.create_publisher(PoseStamped, GOAL_POSE_TOPIC, 10)
+        self.publisher_ = self.create_publisher(PoseStamped, self.GOAL_POSE_TOPIC, 10)
 
         # # Load waypoints from YAML
         # self.poses = self.load_waypoints()
@@ -77,37 +78,37 @@ class PosePublisherNode(Node):
         self.current_index = 0
 
         # Keep track of last N "is stable" results
-        self.stable_flags = deque(maxlen=STABLE_SAMPLES)
+        self.stable_flags = deque(maxlen=self.STABLE_SAMPLES)
 
         # Subscriber for pid_error
         self.pid_sub = self.create_subscription(
             PoseStamped,
-            PID_ERROR_TOPIC,
+            self.PID_ERROR_TOPIC,
             self.pid_error_callback,
             10
         )
 
         self.joy_sub = self.create_subscription(
             String,
-            JOY_BUTTON_TOPIC,
+            self.JOY_BUTTON_TOPIC,
             self.manual_next_waypoint,
             1
         )
 
         # Timer for publishing the current goal pose
-        self.timer = self.create_timer(PUBLISH_PERIOD, self.timer_callback)
+        self.timer = self.create_timer(self.PUBLISH_PERIOD, self.timer_callback)
 
     # YAML loading
 
     def load_waypoints(self):
         """Load waypoints from YAML and return a sorted list of dicts."""
         try:
-            pkg_share = get_package_share_directory(WAYPOINT_PACKAGE)
+            pkg_share = get_package_share_directory(self.WAYPOINT_PACKAGE)
         except Exception as e:
-            self.get_logger().error(f'Could not find package "{WAYPOINT_PACKAGE}": {e}')
+            self.get_logger().error(f'Could not find package "{self.WAYPOINT_PACKAGE}": {e}')
             return []
 
-        yaml_path = Path(pkg_share) / WAYPOINT_FILE_REL
+        yaml_path = Path(pkg_share) / self.WAYPOINT_FILE_REL
         if not yaml_path.is_file():
             self.get_logger().error(f'Waypoint YAML not found: {yaml_path}')
             return []
@@ -158,14 +159,14 @@ class PosePublisherNode(Node):
 
         # Per-axis
         within_axes = (
-            abs(err_x) < THRESH_X and
-            abs(err_y) < THRESH_Y and
-            abs(err_z) < THRESH_Z
+            abs(err_x) < self.THRESH_X and
+            abs(err_y) < self.THRESH_Y and
+            abs(err_z) < self.THRESH_Z
         )
 
         # Total distance
         dist = math.sqrt(err_x**2 + err_y**2 + err_z**2)
-        within_total = dist < THRESH_TOTAL
+        within_total = dist < self.THRESH_TOTAL
 
         is_stable = within_axes and within_total
         self.stable_flags.append(is_stable)
@@ -178,7 +179,7 @@ class PosePublisherNode(Node):
 
         # Check if the last N samples are all stable
         if (
-            len(self.stable_flags) == STABLE_SAMPLES and
+            len(self.stable_flags) == self.STABLE_SAMPLES and
             all(self.stable_flags)
         ):
             self.advance_waypoint()

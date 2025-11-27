@@ -24,7 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'pose_publisher = pose_publisher.pose_publisher_node:main',
+            'pose_publisher = pose_publisher.pose_publisher:main',
         ],
     },
 )
