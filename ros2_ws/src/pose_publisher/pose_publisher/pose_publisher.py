@@ -8,6 +8,7 @@ from pathlib import Path
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped, Pose
+from std_msgs.msg import String
 from ament_index_python.packages import get_package_share_directory
 import yaml
 
@@ -15,6 +16,7 @@ import yaml
 # Topics / frames
 GOAL_POSE_TOPIC      = '/goal_pose'
 PID_ERROR_TOPIC      = '/pid_error'
+JOY_BUTTON_TOPIC     = '/next_waypoint'
 FRAME_ID             = 'odom'
 
 # Publishing rate (seconds)
@@ -83,6 +85,13 @@ class PosePublisherNode(Node):
             PID_ERROR_TOPIC,
             self.pid_error_callback,
             10
+        )
+
+        self.joy_sub = self.create_subscription(
+            String,
+            JOY_BUTTON_TOPIC,
+            self.manual_next_waypoint,
+            1
         )
 
         # Timer for publishing the current goal pose
@@ -173,6 +182,10 @@ class PosePublisherNode(Node):
             all(self.stable_flags)
         ):
             self.advance_waypoint()
+    
+
+    def manual_next_waypoint(self, msg: String):
+        self.advance_waypoint()
 
     def timer_callback(self):
         """Publish current waypoint pose repeatedly."""
