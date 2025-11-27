@@ -7,7 +7,7 @@ from pathlib import Path
 
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import PoseStamped, Pose
+from geometry_msgs.msg import PoseStamped, Pose, TwistStamped
 from std_msgs.msg import String
 from ament_index_python.packages import get_package_share_directory
 import yaml
@@ -22,6 +22,7 @@ class PosePublisherNode(Node):
         # Topics / frames
         self.GOAL_POSE_TOPIC      = 'goal_pose'
         self.PID_ERROR_TOPIC      = 'pid_error'
+        self.CMD                  = 'cmd_vel'
         self.JOY_BUTTON_TOPIC     = 'next_waypoint'
         self.FRAME_ID             = 'odom'
 
@@ -30,10 +31,10 @@ class PosePublisherNode(Node):
 
         # Stability logic
         self.STABLE_SAMPLES       = 5        # how many readings must be below thresholds
-        self.THRESH_X             = 0.15
-        self.THRESH_Y             = 0.15
-        self.THRESH_Z             = 0.15
-        self.THRESH_TOTAL         = 0.25
+        self.THRESH_X             = 0.00005
+        self.THRESH_Y             = 0.00005
+        self.THRESH_Z             = 0.00005
+        self.THRESH_TOTAL         = 0.000025
 
         # Waypoint YAML location
         self.WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
@@ -65,6 +66,9 @@ class PosePublisherNode(Node):
             waypoint.pose = pose
             waypoint_list.append(waypoint)
 
+        # self.get_logger().error(f'Waypoints: {waypoint_list}')
+
+
         self.waypoint_msg_list = waypoint_list
 
 
@@ -81,10 +85,17 @@ class PosePublisherNode(Node):
         self.stable_flags = deque(maxlen=self.STABLE_SAMPLES)
 
         # Subscriber for pid_error
-        self.pid_sub = self.create_subscription(
-            PoseStamped,
-            self.PID_ERROR_TOPIC,
-            self.pid_error_callback,
+        # self.pid_sub = self.create_subscription(
+        #     PoseStamped,
+        #     self.PID_ERROR_TOPIC,
+        #     self.pid_error_callback,
+        #     10
+        # )
+
+        self.cmd_sub = self.create_subscription(
+            TwistStamped,
+            self.CMD,
+            self.cmd_error_callback,
             10
         )
 
@@ -183,6 +194,38 @@ class PosePublisherNode(Node):
             all(self.stable_flags)
         ):
             self.advance_waypoint()
+
+    # def cmd_error_callback(self, msg: TwistStamped):
+    #     """Store whether this error sample is within all thresholds."""
+    #     err_x = float(msg.twist.linear.x)
+    #     err_y = float(msg.twist.linear.y)
+    #     err_z = float(msg.twist.linear.z)
+    #     # Per-axis
+    #     within_axes = (
+    #         abs(err_x) < self.THRESH_X and
+    #         abs(err_y) < self.THRESH_Y and
+    #         abs(err_z) < self.THRESH_Z
+    #     )
+
+    #     # Total distance
+    #     dist = math.sqrt(err_x**2 + err_y**2 + err_z**2)
+    #     within_total = dist < self.THRESH_TOTAL
+
+    #     is_stable = within_axes and within_total
+    #     self.stable_flags.append(is_stable)
+
+    #     # Debugging
+    #     # self.get_logger().info(
+    #     #     f'pid_error: ({err_x:.3f}, {err_y:.3f}, {err_z:.3f}), '
+    #     #     f'dist={dist:.3f}, stable={is_stable}'
+    #     # )
+
+    #     # Check if the last N samples are all stable
+    #     if (
+    #         len(self.stable_flags) == self.STABLE_SAMPLES and
+    #         all(self.stable_flags)
+    #     ):
+    #         self.advance_waypoint()
     
 
     def manual_next_waypoint(self, msg: String):
@@ -221,10 +264,11 @@ class PosePublisherNode(Node):
 
     def advance_waypoint(self):
         """Advance to the next waypoint when stable, if any."""
-        if self.current_index < len(self.poses) - 1:
+        self.get_logger().info(f'Nr poses: {len(self.waypoint_msg_list)}')
+        if self.current_index < len(self.waypoint_msg_list) - 1:
             self.current_index += 1
             self.stable_flags.clear()  # reset stability history for the new target
-            self.get_logger().info(f'Advancing to waypoint {self.current_index + 1}/{len(self.poses)}')
+            self.get_logger().info(f'Advancing to waypoint {self.current_index + 1}/{len(self.waypoint_msg_list)}')
         else:
             self.get_logger().info('Last waypoint reached; not advancing further.')
 

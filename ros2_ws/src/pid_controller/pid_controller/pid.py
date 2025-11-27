@@ -103,6 +103,13 @@ class PID(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
+        self.pid_error_pub = self.create_publisher(
+            PoseStamped,
+            "pid_error",  # this becomes /tello/control/pid_error if the node has that namespace
+            QoSProfile(depth=10),
+            callback_group=MutuallyExclusiveCallbackGroup()
+        )
+
         self.create_timer(
             timer_period_sec=0.05,
             callback=self.get_transform,
@@ -174,12 +181,29 @@ class PID(Node):
         error = self.twist_array  # [ex, ey, ez, epsi]
 
         # -----------------------
-        # DEADBand for x, y, z, yaw
+        # error in base_link frame
+        error = self.twist_array  # [ex, ey, ez, epsi]
+
         deadband = np.array([0.05, 0.05, 0.05, 0.03], dtype=float)
         for i in range(4):
             if abs(error[i]) < deadband[i]:
                 error[i] = 0.0
-        # -----------------------
+
+        # publish error as PoseStamped
+        err_msg = PoseStamped()
+        err_msg.header.stamp = msg.header.stamp
+        err_msg.header.frame_id = "base_link"
+
+        err_msg.pose.position.x = float(error[0])
+        err_msg.pose.position.y = float(error[1])
+        err_msg.pose.position.z = float(error[2])
+
+        # stash yaw error in orientation.z (or wherever you like)
+        err_msg.pose.orientation.z = float(error[3])
+        err_msg.pose.orientation.w = 1.0
+
+        self.pid_error_pub.publish(err_msg)
+
 
         # time step
         sec, nanosec = self.get_clock().now().seconds_nanoseconds()
