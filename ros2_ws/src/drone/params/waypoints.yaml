@@ -131,8 +131,8 @@ tello/control/pose_publisher:
           y: 0.5
           z: 1.2
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 0.49999999999999994
           w: 0.9659258262890683
 
@@ -143,8 +143,8 @@ tello/control/pose_publisher:
           y: 0.5
           z: 1.0
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 0.49999999999999994
           w: 0.9659258262890683
 
@@ -167,8 +167,8 @@ tello/control/pose_publisher:
           y: -0.5
           z: 1.0
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: -0.49999999999999994
           w: 0.9659258262890683
 
@@ -179,8 +179,8 @@ tello/control/pose_publisher:
           y: -0.5
           z: 1.0
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: -0.49999999999999994
           w: 0.9659258262890683
 
@@ -203,8 +203,8 @@ tello/control/pose_publisher:
           y: 0.5
           z: 1.0
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 0.49999999999999994
           w: 0.9659258262890683
 
@@ -215,8 +215,8 @@ tello/control/pose_publisher:
           y: 0.5
           z: 1.0
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 0.49999999999999994
           w: 0.9659258262890683
 
@@ -264,8 +264,8 @@ tello/control/pose_publisher:
           y: 0.7
           z: 0.8
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: -0.7071067811865475
           w: 0.9238795325112867
 
@@ -276,8 +276,8 @@ tello/control/pose_publisher:
           y: 0.7
           z: 0.8
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: -1.0
           w: 0.7071067811865476
 
@@ -288,8 +288,8 @@ tello/control/pose_publisher:
           y: 0.7
           z: 0.8
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: -0.7071067811865476
           w: 0.38268343236508984
 
@@ -300,10 +300,10 @@ tello/control/pose_publisher:
           y: 0.0
           z: 0.8
         orientation:
-          x: 0
-          y: 0
-          z: 0
-          w: 0
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 0.0
 
     waypoint_25:
       pose:
@@ -312,8 +312,8 @@ tello/control/pose_publisher:
           y: -0.5
           z: 0.8
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 0.7071067811865475
           w: -0.3826834323650897
 
@@ -324,8 +324,8 @@ tello/control/pose_publisher:
           y: -0.5
           z: 0.8
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 1.0
           w: -0.7071067811865475
 
@@ -336,8 +336,8 @@ tello/control/pose_publisher:
           y: -0.5
           z: 0.8
         orientation:
-          x: 0
-          y: 0
+          x: 0.0
+          y: 0.0
           z: 0.7071067811865477
           w: -0.9238795325112867
 
