@@ -49,6 +49,12 @@ def generate_launch_description():
         "competition_map_config.yaml",
     ])
 
+    pose_publusher_params = PathJoinSubstitution([
+        get_package_share_directory("drone"),
+        "params",
+        "waypoints.yaml",
+    ])
+
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -166,6 +172,7 @@ def generate_launch_description():
         name="pose_publisher",
         namespace="tello/control",
         output="screen",
+        parameters=[pose_publusher_params]
     )
 
 
