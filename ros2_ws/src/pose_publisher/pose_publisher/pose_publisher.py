@@ -30,20 +30,21 @@ class PosePublisherNode(Node):
         self.PUBLISH_PERIOD       = 0.5
 
         # Stability logic
-        self.STABLE_SAMPLES       = 5        # how many readings must be below thresholds
-        self.THRESH_X             = 0.00005
-        self.THRESH_Y             = 0.00005
-        self.THRESH_Z             = 0.00005
-        self.THRESH_TOTAL         = 0.000025
+        self.STABLE_SAMPLES       = 20        # how many readings must be below thresholds
+        
+        self.THRESH_X             = 0.0
+        self.THRESH_Y             = 0.0
+        self.THRESH_Z             = 0.0
+        self.THRESH_TOTAL         = 0.0
 
         # Waypoint YAML location
         self.WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
         self.WAYPOINT_FILE_REL    = 'params/waypoints.yaml'  # path inside that package
 
         self.THRESH_X = self.get_parameter_or("thresh_x", self.THRESH_X).value
-        self.THRESH_Y = self.get_parameter_or("thresh_x", self.THRESH_Y).value
-        self.THRESH_Z = self.get_parameter_or("thresh_x", self.THRESH_Z).value
-        self.THRESH_TOTAL = self.get_parameter_or("thresh_x", self.THRESH_TOTAL).value
+        self.THRESH_Y = self.get_parameter_or("thresh_y", self.THRESH_Y).value
+        self.THRESH_Z = self.get_parameter_or("thresh_y", self.THRESH_Z).value
+        self.THRESH_TOTAL = self.get_parameter_or("thresh_total", self.THRESH_TOTAL).value
 
         self.markers_id_list = self.get_parameter("waypoint").value
         
