@@ -31,7 +31,7 @@ class PosePublisherNode(Node):
 
         # Stability logic
         self.STABLE_SAMPLES       = 20        # how many readings must be below thresholds
-        
+
         self.THRESH_X             = 0.0
         self.THRESH_Y             = 0.0
         self.THRESH_Z             = 0.0
@@ -181,7 +181,9 @@ class PosePublisherNode(Node):
         within_total = dist < self.THRESH_TOTAL
 
         is_stable = within_axes and within_total
-        self.stable_flags.append(is_stable)
+        
+        if is_stable:
+            self.stable_flags.append(is_stable)
 
         # Debugging
         # self.get_logger().info(
@@ -191,7 +193,7 @@ class PosePublisherNode(Node):
 
         # Check if the last N samples are all stable
         if (
-            len(self.stable_flags) == self.STABLE_SAMPLES and
+            len(self.stable_flags) >= self.STABLE_SAMPLES and
             all(self.stable_flags)
         ):
             self.advance_waypoint()
