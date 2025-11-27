@@ -161,6 +161,7 @@ class PID(Node):
         self.goal_pose = msg
 
         goal_pose: PoseStamped = tf2_geometry_msgs.do_transform_pose_stamped(self.goal_pose, self.transform)
+        self.pid_error_pub.publish(goal_pose)
 
         x = goal_pose.pose.position.x * 1.0
         y = goal_pose.pose.position.y * 1.0
@@ -189,20 +190,20 @@ class PID(Node):
             if abs(error[i]) < deadband[i]:
                 error[i] = 0.0
 
-        # publish error as PoseStamped
-        err_msg = PoseStamped()
-        err_msg.header.stamp = msg.header.stamp
-        err_msg.header.frame_id = "base_link"
+        # # publish error as PoseStamped
+        # err_msg = PoseStamped()
+        # err_msg.header.stamp = msg.header.stamp
+        # err_msg.header.frame_id = "base_link"
 
-        err_msg.pose.position.x = float(error[0])
-        err_msg.pose.position.y = float(error[1])
-        err_msg.pose.position.z = float(error[2])
+        # err_msg.pose.position.x = float(error[0])
+        # err_msg.pose.position.y = float(error[1])
+        # err_msg.pose.position.z = float(error[2])
 
-        # stash yaw error in orientation.z (or wherever you like)
-        err_msg.pose.orientation.z = float(error[3])
-        err_msg.pose.orientation.w = 1.0
+        # # stash yaw error in orientation.z (or wherever you like)
+        # err_msg.pose.orientation.z = float(error[3])
+        # err_msg.pose.orientation.w = 1.0
 
-        self.pid_error_pub.publish(err_msg)
+        # self.pid_error_pub.publish(err_msg)
 
 
         # time step

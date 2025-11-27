@@ -85,19 +85,19 @@ class PosePublisherNode(Node):
         self.stable_flags = deque(maxlen=self.STABLE_SAMPLES)
 
         # Subscriber for pid_error
-        # self.pid_sub = self.create_subscription(
-        #     PoseStamped,
-        #     self.PID_ERROR_TOPIC,
-        #     self.pid_error_callback,
-        #     10
-        # )
-
-        self.cmd_sub = self.create_subscription(
-            TwistStamped,
-            self.CMD,
-            self.cmd_error_callback,
+        self.pid_sub = self.create_subscription(
+            PoseStamped,
+            self.PID_ERROR_TOPIC,
+            self.pid_error_callback,
             10
         )
+
+        # self.cmd_sub = self.create_subscription(
+        #     TwistStamped,
+        #     self.CMD,
+        #     self.cmd_error_callback,
+        #     10
+        # )
 
         self.joy_sub = self.create_subscription(
             String,
