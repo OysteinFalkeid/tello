@@ -13,8 +13,8 @@ import yaml
 
 
 # Topics / frames
-GOAL_POSE_TOPIC      = '/tello/control/goal_pose'
-PID_ERROR_TOPIC      = 'tello/control/pid_error'
+GOAL_POSE_TOPIC      = '/goal_pose'
+PID_ERROR_TOPIC      = '/pid_error'
 FRAME_ID             = 'map'
 
 # Publishing rate (seconds)

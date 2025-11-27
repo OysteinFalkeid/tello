@@ -159,10 +159,18 @@ def generate_launch_description():
         namespace="tello/control",
         output="screen",
     )
+    
+    pose_publusher_node = Node(
+        package="pose_publisher",
+        executable="pose_publisher",
+        name="pose_publisher",
+        namespace="tello/control",
+        output="screen",
+    )
 
 
     return LaunchDescription([
-        # tello_api_node,
+        tello_api_node,
         rviz2_node,
         joy_node,
         joy_teleop_node,
@@ -174,4 +182,5 @@ def generate_launch_description():
         aruco_opencv_map_publisher_node,
         pose_estimator_node,
         pid_controller_node,
+        pose_publusher_node,
     ])
