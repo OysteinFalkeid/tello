@@ -152,7 +152,7 @@ class API(Node):
 
         #logging status of tello
         self.create_timer(
-            timer_period_sec=15,
+            timer_period_sec=10,
             callback=self.tello_status_report,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -164,19 +164,19 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
-        # #ping acceleration from tello
-        # self.create_timer(
-        #     timer_period_sec=0.01,
-        #     callback=self.get_acceleration,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
+        #ping acceleration from tello
+        self.create_timer(
+            timer_period_sec=0.01,
+            callback=self.get_acceleration,
+            callback_group=MutuallyExclusiveCallbackGroup()
+        )
 
         # #ping velocity from tello
-        # self.create_timer(
-        #     timer_period_sec=0.01,
-        #     callback=self.get_velocity,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
+        self.create_timer(
+            timer_period_sec=0.01,
+            callback=self.get_velocity,
+            callback_group=MutuallyExclusiveCallbackGroup()
+        )
 
         #ping hight from tello
         self.create_timer(
@@ -239,77 +239,135 @@ class API(Node):
         self.temperature = self.tello.get_temperature()
         self.get_logger().info(F"Temperature {self.temperature}C")
         self.flight_time = self.tello.get_flight_time()
-        self.get_logger().info(F"Flight_time {self.flight_time}")
+        # self.get_logger().info(F"Flight_time {self.flight_time}")
         self.get_logger().info("---------------------------------------------")
 
-    def get_acceleration(self):
-        x = self.tello.get_acceleration_x() / 100.0
-        y = self.tello.get_acceleration_y() / -100.0
-        z = self.tello.get_acceleration_z() / 100.0
+    # def get_acceleration(self):
+    #     x = self.tello.get_acceleration_x() / 100.0
+    #     y = self.tello.get_acceleration_y() / -100.0
+    #     z = self.tello.get_acceleration_z() / 100.0
 
-        message = Imu()
-        message.header.frame_id = "base_link"
-        message.header.stamp = self.get_clock().now().to_msg()
-        message.linear_acceleration.x = x
-        message.linear_acceleration.y = y
-        message.linear_acceleration.z = z
+    #     message = Imu()
+    #     message.header.frame_id = "base_link"
+    #     message.header.stamp = self.get_clock().now().to_msg()
+    #     message.linear_acceleration.x = x
+    #     message.linear_acceleration.y = y
+    #     message.linear_acceleration.z = z
 
-        message.linear_acceleration_covariance = np.array([
-            [1.0, 0.1, 0.1, 0.0,  0.0,  0.0],
-            [0.1, 1.0, 0.1, 0.0,  0.0,  0.0],
-            [0.1, 0.1, 1.0, 0.0,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.01,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.0,  0.01],
-        ]).flatten().tolist()
+    #     message.linear_acceleration_covariance = np.array([
+    #         [1.0, 0.1, 0.1, 0.0,  0.0,  0.0],
+    #         [0.1, 1.0, 0.1, 0.0,  0.0,  0.0],
+    #         [0.1, 0.1, 1.0, 0.0,  0.0,  0.0],
+    #         [0.0, 0.0, 0.0, 0.01,  0.0,  0.0],
+    #         [0.0, 0.0, 0.0, 0.0,  0.01,  0.0],
+    #         [0.0, 0.0, 0.0, 0.0,  0.0,  0.01],
+    #     ]).flatten().tolist()
 
-        self.publisher_acceleration.publish(message)
+    #     self.publisher_acceleration.publish(message)
 
-    def get_velocity(self):
-        x = self.tello.get_speed_x() / 100.0
-        y = self.tello.get_speed_y() / -100.0
-        z = self.tello.get_speed_z() / 100.0
+    # def get_acceleration(self):
+    #     # Tello returns values in cm/s^2, hence /100.0 to get m/s^2
+    #     x = self.tello.get_acceleration_x() / 100.0
+    #     y = self.tello.get_acceleration_y() / -100.0  # sign flip for your frame
+    #     z = self.tello.get_acceleration_z() / 100.0
+
+    #     msg = Imu()
+    #     msg.header.frame_id = "base_link"
+    #     msg.header.stamp = self.get_clock().now().to_msg()
+
+    #     # Only use linear acceleration for EKF
+    #     msg.linear_acceleration.x = x
+    #     msg.linear_acceleration.y = y
+    #     msg.linear_acceleration.z = z
+
+    #     # Reasonable covariance: we trust the *shape* but not perfectly
+    #     cov = np.zeros((6, 6))
+    #     cov[0, 0] = 0.5   # ax variance
+    #     cov[1, 1] = 0.5   # ay
+    #     cov[2, 2] = 0.5   # az
+    #     cov[3, 3] = 1.0   # angular velocities (unused, but must be non-zero)
+    #     cov[4, 4] = 1.0
+    #     cov[5, 5] = 1.0
+
+    #     msg.linear_acceleration_covariance = cov.flatten().tolist()
+
+    #     self.publisher_acceleration.publish(msg)
+
+    
+    # def get_velocity(self):
+    #     # Tello returns speed in cm/s → convert to m/s
+    #     vx = self.tello.get_speed_x() / 100.0
+    #     vy = self.tello.get_speed_y() / -100.0  # sign flip to match your frame
+    #     vz = self.tello.get_speed_z() / 100.0
+
+    #     msg = TwistWithCovarianceStamped()
+    #     msg.header.frame_id = "base_link"
+    #     msg.header.stamp = self.get_clock().now().to_msg()
+
+    #     msg.twist.twist.linear.x = vx
+    #     msg.twist.twist.linear.y = vy
+    #     msg.twist.twist.linear.z = vz
+
+    #     # We only really use linear velocity in the EKF; angular parts are ignored.
+    #     cov = np.zeros((6, 6))
+    #     cov[0, 0] = 0.2   # var(vx)
+    #     cov[1, 1] = 0.2   # var(vy)
+    #     cov[2, 2] = 0.2   # var(vz)
+    #     cov[3, 3] = 1.0   # var(wx) – large (we don't use it)
+    #     cov[4, 4] = 1.0   # var(wy)
+    #     cov[5, 5] = 1.0   # var(wz)
+
+    #     msg.twist.covariance = cov.flatten().tolist()
+
+    #     if self.takeoff:
+    #         self.publisher_velocity.publish(msg)
+
+
+    # def get_velocity(self):
+    #     x = self.tello.get_speed_x() / 100.0
+    #     y = self.tello.get_speed_y() / -100.0
+    #     z = self.tello.get_speed_z() / 100.0
         
-        # self.velocity_list.append(np.array([[x, -y, z], [0, 0, 0]]).astype(float).T)
+    #     # self.velocity_list.append(np.array([[x, -y, z], [0, 0, 0]]).astype(float).T)
 
 
-        # velocity = np.array([[x, -y, z], [0, 0, 0]]).astype(float).T
+    #     # velocity = np.array([[x, -y, z], [0, 0, 0]]).astype(float).T
 
-        # message = TwistWithCovarianceStamped()
-        # message.header.frame_id = "base_link"
-        # message.header.stamp = self.get_clock().now().to_msg()
+    #     # message = TwistWithCovarianceStamped()
+    #     # message.header.frame_id = "base_link"
+    #     # message.header.stamp = self.get_clock().now().to_msg()
 
-        # message.twist.twist.linear.x = velocity[0, 0]
-        # message.twist.twist.linear.y = velocity[1, 0]
-        # message.twist.twist.linear.z = velocity[2, 0]
-        # # message.twist.twist.angular.x = velocity[0, 1]
-        # # message.twist.twist.angular.y = velocity[1, 1]
-        # # message.twist.twist.angular.z = velocity[2, 1]        
+    #     # message.twist.twist.linear.x = velocity[0, 0]
+    #     # message.twist.twist.linear.y = velocity[1, 0]
+    #     # message.twist.twist.linear.z = velocity[2, 0]
+    #     # # message.twist.twist.angular.x = velocity[0, 1]
+    #     # # message.twist.twist.angular.y = velocity[1, 1]
+    #     # # message.twist.twist.angular.z = velocity[2, 1]        
 
-        message = TwistWithCovarianceStamped()
-        # message = TwistStamped()
-        message.header.frame_id = "base_link"
-        message.header.stamp = self.get_clock().now().to_msg()
+    #     message = TwistWithCovarianceStamped()
+    #     # message = TwistStamped()
+    #     message.header.frame_id = "base_link"
+    #     message.header.stamp = self.get_clock().now().to_msg()
 
-        message.twist.twist.linear.x = x
-        message.twist.twist.linear.y = y
-        message.twist.twist.linear.z = z
+    #     message.twist.twist.linear.x = x
+    #     message.twist.twist.linear.y = y
+    #     message.twist.twist.linear.z = z
         
-        message.twist.covariance = np.array([
-            [1.0, 0.1, 0.1, 0.0,  0.0,  0.1],
-            [0.1, 1.0, 0.1, 0.0,  0.0,  0.1],
-            [0.1, 0.1, 1.0, 0.0,  0.0,  0.1],
-            [0.0, 0.0, 0.0, 0.01, 0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01, 0.0],
-            [0.1, 0.1, 0.1, 0.0,  0.0,  1.0],
-        ]).flatten().tolist()        
+    #     message.twist.covariance = np.array([
+    #         [1.0, 0.1, 0.1, 0.0,  0.0,  0.1],
+    #         [0.1, 1.0, 0.1, 0.0,  0.0,  0.1],
+    #         [0.1, 0.1, 1.0, 0.0,  0.0,  0.1],
+    #         [0.0, 0.0, 0.0, 0.01, 0.0,  0.0],
+    #         [0.0, 0.0, 0.0, 0.0,  0.01, 0.0],
+    #         [0.1, 0.1, 0.1, 0.0,  0.0,  1.0],
+    #     ]).flatten().tolist()        
         
-        # message.twist.linear.x = x
-        # message.twist.linear.y = y
-        # message.twist.linear.z = z
+    #     # message.twist.linear.x = x
+    #     # message.twist.linear.y = y
+    #     # message.twist.linear.z = z
         
-        if self.takeoff:
-            self.publisher_velocity.publish(message)
+    #     if self.takeoff:
+    #         self.publisher_velocity.publish(message)
 
     def get_hight(self):
         z = self.tello.get_height() / 100.0

@@ -177,21 +177,30 @@ class Estimator(Node):
                         pose_estimation_list.append(pose_estimaton)
 
                 for estimation in pose_estimation_list:
-
                     message = PoseWithCovarianceStamped()
                     message.header.frame_id = "odom"
                     message.header.stamp = msg.header.stamp
                     message.pose.pose = self.matrix_to_pose(estimation)
-                    message.pose.covariance = (np.array([
-                        [10.0,      0,        0,        0,         0,         0      ],
-                        [0,        10.0,      0,        0,         0,         0      ],
-                        [0,        0,        10.0,      0,         0,         0      ],
-                        [0,        0,        0,        10.0,        0,         0     ],
-                        [0,        0,        0,        0,         10.0,        0     ],
-                        [0,        0,        0,        0,         0,         10.0    ]
-                        ]) * math.sqrt(np.sum(np.array([pose_estimaton[0, 3]**2, pose_estimaton[1, 3]**2, pose_estimaton[2, 3]**2]))) * 4).astype(float).flatten().tolist()
-                    
+
+                    dist = math.sqrt(
+                        estimation[0, 3]**2 +
+                        estimation[1, 3]**2 +
+                        estimation[2, 3]**2
+                    )
+
+                    base_cov = np.array([
+                        [10.0, 0,    0,    0,    0,    0],
+                        [0,   10.0,  0,    0,    0,    0],
+                        [0,    0,   10.0,  0,    0,    0],
+                        [0,    0,    0,   10.0,  0,    0],
+                        [0,    0,    0,    0,   10.0,  0],
+                        [0,    0,    0,    0,    0,   10.0],
+                    ])
+
+                    message.pose.covariance = (base_cov * dist * 4).astype(float).flatten().tolist()
+
                     self.publisher_pose.publish(message)
+
 
 
             except Exception as e:

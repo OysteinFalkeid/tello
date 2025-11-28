@@ -22,7 +22,7 @@ tello/control/joy_teleop:
         data:
           value: 'Emergency stop'
 
-    # next goal pose
+    # Next waypoint
     next_goal:
       type: topic
       interface_type: std_msgs/msg/String
@@ -30,4 +30,4 @@ tello/control/joy_teleop:
       deadman_buttons: [2]
       message_value:
         data:
-          value: "next waypoint"
+          value: "Next waypoint"
