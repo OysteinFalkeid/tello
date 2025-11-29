@@ -312,7 +312,8 @@ class API(Node):
             self.publisher_velocity.publish(message)
 
     def get_hight(self):
-        z = self.tello.get_height() / 100.0
+        # z = self.tello.get_height() / 100.0
+        z = self.tello.get_distance_tof() / 100.0
         if z > 0.01:
             message = PoseWithCovarianceStamped()
             message.header.frame_id = "odom"
@@ -320,14 +321,14 @@ class API(Node):
 
             message.pose.pose.position.z = z
 
-            message.pose.covariance = np.array([
-                [10.0, 0.0, 0.0, 0.0,  0.0,  0.0],
-                [0.0, 10.0, 0.0, 0.0,  0.0,  0.0],
-                [0.0, 0.0, 10.0, 0.0,  0.0,  0.0],
-                [0.0, 0.0, 0.0, 10.0,  0.0,  0.0],
-                [0.0, 0.0, 0.0, 0.0,  10.0,  0.0],
-                [0.0, 0.0, 0.0, 0.0,  0.0,  10.0],
-            ]).flatten().tolist()
+            message.pose.covariance = (np.array([
+                [1.0, 0.0, 0.0, 0.0,  0.0,  0.0],
+                [0.0, 1.0, 0.0, 0.0,  0.0,  0.0],
+                [0.0, 0.0, 1.0, 0.0,  0.0,  0.0],
+                [0.0, 0.0, 0.0, 1.0,  0.0,  0.0],
+                [0.0, 0.0, 0.0, 0.0,  1.0,  0.0],
+                [0.0, 0.0, 0.0, 0.0,  0.0,  1.0],
+            ]) * 2).flatten().tolist()
 
             self.publisher_hight.publish(message)
 

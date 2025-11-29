@@ -97,9 +97,9 @@ def generate_launch_description():
         name='teleop_twist_joy',
         namespace="tello/control",
         output='screen',
-        remappings=[
-            ("cmd_vel", "joy_cmd_vel")
-        ],
+        # remappings=[
+        #     ("cmd_vel", "joy_cmd_vel")
+        # ],
         parameters=[teleop_config]
 
     )
@@ -188,6 +188,6 @@ def generate_launch_description():
         odom_transform_node,
         aruco_opencv_map_publisher_node,
         pose_estimator_node,
-        pid_controller_node,
+        # pid_controller_node,
         pose_publusher_node,
     ])
