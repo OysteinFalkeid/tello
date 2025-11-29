@@ -53,8 +53,8 @@ class PID(Node):
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 1.5, 1.0], dtype=float)
-        self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
+        self.Kp = np.array([0.15, 0.15, 0.5, 0.8], dtype=float)
+        self.Kd = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
         self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
@@ -63,7 +63,7 @@ class PID(Node):
         self.error_prev = np.zeros(4, dtype=float)
         self.error_int  = np.zeros(4, dtype=float)
 
-        self.u_max = np.array([0.2, 0.2, 0.2, 0.8], dtype=float)  # cmd_vel limits
+        self.u_max = np.array([0.2, 0.2, 0.2, 0.2], dtype=float)  # cmd_vel limits
         ##########
 
         self.wait_for_transform("odom", "base_link")

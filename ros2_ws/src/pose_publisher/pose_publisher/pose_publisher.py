@@ -165,9 +165,9 @@ class PosePublisherNode(Node):
 
     def pid_error_callback(self, msg: PoseStamped):
         """Store whether this error sample is within all thresholds."""
-        err_x = float(msg.pose.position.x)
-        err_y = float(msg.pose.position.y)
-        err_z = float(msg.pose.position.z)
+        err_x = msg.pose.position.x
+        err_y = msg.pose.position.y
+        err_z = msg.pose.position.z
 
         # Per-axis
         within_axes = (
@@ -192,12 +192,10 @@ class PosePublisherNode(Node):
         # )
 
         # Check if the last N samples are all stable
-        if (
-            len(self.stable_flags) >= self.STABLE_SAMPLES and
-            all(self.stable_flags)
-        ):
-            # self.advance_waypoint()
-            pass
+        if (len(self.stable_flags) >= self.STABLE_SAMPLES):
+            if self.current_index > 0:
+                self.advance_waypoint()
+            # pass
 
     # def cmd_error_callback(self, msg: TwistStamped):
     #     """Store whether this error sample is within all thresholds."""

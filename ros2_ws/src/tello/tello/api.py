@@ -339,7 +339,7 @@ class API(Node):
         left_right = int(msg.twist.linear.y * -100)
         forward_backward = int(msg.twist.linear.x * 100)
         up_down = int(msg.twist.linear.z * 100)
-        yaw = int(msg.twist.angular.z * -100)
+        yaw = int(msg.twist.angular.z * -100 / 2.2)
 
         if self.takeoff:
             self.tello.send_rc_control(
