@@ -30,12 +30,14 @@ class PosePublisherNode(Node):
         self.PUBLISH_PERIOD       = 0.5
 
         # Stability logic
-        self.STABLE_SAMPLES       = 20        # how many readings must be below thresholds
+        self.STABLE_SAMPLES       = 10        # how many readings must be below thresholds
 
         self.THRESH_X             = 0.0
         self.THRESH_Y             = 0.0
         self.THRESH_Z             = 0.0
         self.THRESH_TOTAL         = 0.0
+
+        self.THRESH_ANGLE = 0.25
 
         # Waypoint YAML location
         self.WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
@@ -80,7 +82,7 @@ class PosePublisherNode(Node):
         # self.poses = self.load_waypoints()
         # if not self.poses:
         #     self.get_logger().error('No waypoints loaded. Node will still run but publish nothing useful.')
-        self.current_index = 0
+        self.current_index = 16
 
         # Keep track of last N "is stable" results
         self.stable_flags = deque(maxlen=self.STABLE_SAMPLES)
@@ -161,6 +163,10 @@ class PosePublisherNode(Node):
         self.get_logger().info(f'Loaded {len(poses)} waypoints from {yaml_path}')
         return poses
 
+    def pose_to_psi(self, pose: Pose):
+        return math.atan2(2*(pose.orientation.w*pose.orientation.z + pose.orientation.x*pose.orientation.y), 1 - 2*(pose.orientation.y*pose.orientation.y + pose.orientation.z*pose.orientation.z))
+    
+
     # Callbacks
 
     def pid_error_callback(self, msg: PoseStamped):
@@ -180,7 +186,9 @@ class PosePublisherNode(Node):
         dist = math.sqrt(err_x**2 + err_y**2 + err_z**2)
         within_total = dist < self.THRESH_TOTAL
 
-        is_stable = within_axes and within_total
+        within_angle = self.THRESH_ANGLE > self.pose_to_psi(msg.pose)
+
+        is_stable = within_axes and within_total and within_angle
 
         if is_stable:
             self.stable_flags.append(is_stable)
@@ -193,7 +201,7 @@ class PosePublisherNode(Node):
 
         # Check if the last N samples are all stable
         if (len(self.stable_flags) >= self.STABLE_SAMPLES):
-            if self.current_index > 0:
+            if self.current_index > 16:
                 self.advance_waypoint()
             # pass
 

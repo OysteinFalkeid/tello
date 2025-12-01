@@ -3,7 +3,7 @@ tello/aruco_opencv_map:
     header:
       frame_id: odom
     # markers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 15, 18]
-    markers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 18]
+    markers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 18, 20]
 
     marker_1:
       pose:
@@ -203,6 +203,18 @@ tello/aruco_opencv_map:
           x: 7.49
           y: 0.35
           z: 0.78
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_20: 
+      pose:
+        position:
+          x: 6.0
+          y: -0.60
+          z: 0.05
         orientation:
           x: 0.5
           y: -0.5
