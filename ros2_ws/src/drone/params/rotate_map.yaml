@@ -1,253 +1,89 @@
-tello/control/pose_publisher:
+tello/aruco_opencv_map:
   ros__parameters:
-
-    thresh_x: 0.2
-    thresh_y: 0.2
-    thresh_z: 0.2
-    thresh_total: 0.20
-
     header:
       frame_id: odom
-
-    waypoint: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-               11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-
-    waypoint_1:
+    markers: [0, 1, 3, 6, 7, 9]
+    
+    marker_0:
       pose:
         position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
+          x: 0.3
+          y: 1.2
+          z: 0.53
+        orientation:
+          x: 0.70710678
           y: 0.0
           z: 0.0
-          w: 1.0
+          w: 0.70710678
 
-    waypoint_2:
+    marker_1:
       pose:
         position:
+          x: 0.3
+          y: -1.5
+          z: 0.53
+        orientation:
           x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
+          y: -0.70710678
+          z: -0.70710678
+          w: 0.0
 
-    waypoint_3:
+    marker_3:
       pose:
         position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
+          x: 0.75
+          y: 0.00
+          z: 0.8
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
 
-    waypoint_4:
+    marker_6:
       pose:
         position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
+          x: 0.75
+          y: 0.00
+          z: 1.01
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
 
-    waypoint_5:
+    marker_7:
       pose:
         position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
+          x: -0.45
+          y: 0.00
+          z: 0.78
+        orientation:
+          x: -0.5
+          y: -0.5
+          z: -0.5
+          w: -0.5
 
-    waypoint_6:
+    marker_9:
       pose:
         position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
+          x: 0.75
+          y: -0.35
+          z: 0.78
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
 
-    waypoint_7:
+    marker_18: 
       pose:
         position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_8:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
-
-    waypoint_9:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_10:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
-
-    waypoint_11:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_12:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
-
-    waypoint_13:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_14:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
-
-    waypoint_15:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_16:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
-
-    waypoint_17:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_18:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
-
-    waypoint_19:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 0°
-          x: 0.0
-          y: 0.0
-          z: 0.0
-          w: 1.0
-
-    waypoint_20:
-      pose:
-        position:
-          x: 0.0
-          y: 0.0
-          z: 1.0
-        orientation:  # 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071
-          w: 0.7071
+          x: 0.7
+          y: 0.35
+          z: 0.78
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
