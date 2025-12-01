@@ -1,12 +1,12 @@
 tello/control/pose_publisher:
   ros__parameters:
 
-    thresh_x: 0.33
-    thresh_y: 0.33
-    thresh_z: 0.33
+    thresh_x: 0.20
+    thresh_y: 0.20
+    thresh_z: 0.10
 
 
-    thresh_total: 0.99
+    thresh_total: 0.30
 
 
 

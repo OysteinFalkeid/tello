@@ -54,16 +54,16 @@ class PID(Node):
 
         # Gains per axis: [x, y, z, yaw]
         self.Kp = np.array([0.15, 0.15, 0.5, 0.8], dtype=float)
-        self.Kd = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)
+        self.Kd = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
-        self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
+        self.Ki = np.array([0.15, 0.15, 0.25, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
         # z between 110 and 130 isntead of 70 to 90
 
         self.error_prev = np.zeros(4, dtype=float)
         self.error_int  = np.zeros(4, dtype=float)
 
-        self.u_max = np.array([0.2, 0.2, 0.2, 0.2], dtype=float)  # cmd_vel limits
+        self.u_max = np.array([0.30, 0.30, 0.40, 0.2], dtype=float)  # cmd_vel limits
         ##########
 
         self.wait_for_transform("odom", "base_link")
@@ -227,14 +227,16 @@ class PID(Node):
         P = self.Kp * error
 
         # D  (derivative of error: (e - e_prev)/dt)
-        D = self.Kd * ((error - self.error_prev) / dt)
+        D = self.Kd * ((error - self.error_prev) * dt)
         self.error_prev = error.copy()
 
         # I with anti-windup
         self.error_int += error * dt
         # clamp integral
-        self.error_int = np.clip(self.error_int, -0.2, 0.2)
+        # self.error_int = np.clip(self.error_int, -0.2, 0.2)
         I = self.Ki * self.error_int
+
+        I = np.clip(I, -0.008, 0.008)
 
         u = P + D + I
 
