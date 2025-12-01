@@ -4,6 +4,8 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import TwistStamped, TwistWithCovarianceStamped, Pose, PoseWithCovarianceStamped, PoseStamped
+from std_msgs.msg import Header, String
+from sensor_msgs.msg import Image, CameraInfo
 from nav_msgs.msg import Odometry
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 from aruco_opencv_msgs.msg import ArucoDetection, MarkerPose, BoardPose
@@ -154,6 +156,16 @@ class Estimator(Node):
             try:
                 for marker in markers:
 
+                    # pose = PoseStamped()
+                    # pose.header = msg.header
+                    # pose.pose = marker.pose
+                    
+                    # pose_in_odom= self.tf_buffer.transform(
+                    #     pose,
+                    #     "odom",
+                    #     timeout=rclpy.duration.Duration(seconds=0.06)
+                    # )
+
                     matrix_in_odom = self.pose_to_matrix(marker.pose)
                     self.markers_odom_detected[marker.marker_id] = matrix_in_odom
                 
@@ -196,6 +208,30 @@ class Estimator(Node):
         for marker in markers:
             self.markers_map[marker.marker_id] =  self.pose_to_matrix(marker.pose)
         
+
+        # marker_base_link_list: list[MarkerPose] = []
+        # for marker in markers:
+        #     self.map_pose = PoseStamped()
+        #     self.map_pose.header = msg.header
+        #     self.map_pose.pose = marker.pose
+
+        #     try:
+        #         # Transform map → base_link
+        #         pose_in_baselink = self.tf_buffer.transform(
+        #             self.map_pose,
+        #             "base_link",
+        #             timeout=rclpy.duration.Duration(seconds=1.0)
+        #         )
+        #         # self.get_logger().info(f"{pose_in_baselink}")
+        #         marker_base_link = MarkerPose()
+        #         marker_base_link.marker_id = marker.marker_id
+        #         marker_base_link.pose = pose_in_baselink.pose
+        #         marker_base_link_list.append(marker_base_link)
+        #     except Exception as e:
+        #         self.get_logger().warning(f"{e}")
+        
+        # self.map.header = msg.header
+        # self.map.markers = marker_base_link_list
 
 def main():
     rclpy.init() 

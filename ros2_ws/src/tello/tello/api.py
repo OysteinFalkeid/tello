@@ -100,20 +100,20 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
         
-        self.publisher_acceleration = self.create_publisher(
-            msg_type=Imu,
-            topic="control/imu0_acceleration",
-            qos_profile=QoSProfile(depth=1),
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # self.publisher_acceleration = self.create_publisher(
+        #     msg_type=Imu,
+        #     topic="control/imu0_acceleration",
+        #     qos_profile=QoSProfile(depth=1),
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
 
-        self.publisher_velocity = self.create_publisher(
-            msg_type=TwistWithCovarianceStamped,
-            # msg_type=TwistStamped,
-            topic="control/twist0_velocity",
-            qos_profile=QoSProfile(depth=1),
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # self.publisher_velocity = self.create_publisher(
+        #     msg_type=TwistWithCovarianceStamped,
+        #     # msg_type=TwistStamped,
+        #     topic="control/twist0_velocity",
+        #     qos_profile=QoSProfile(depth=1),
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
         
         self.publisher_hight = self.create_publisher(
             msg_type=PoseWithCovarianceStamped,
@@ -164,19 +164,19 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
-        #ping acceleration from tello
-        self.create_timer(
-            timer_period_sec=0.01,
-            callback=self.get_acceleration,
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # #ping acceleration from tello
+        # self.create_timer(
+        #     timer_period_sec=0.01,
+        #     callback=self.get_acceleration,
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
 
-        # #ping velocity from tello
-        self.create_timer(
-            timer_period_sec=0.01,
-            callback=self.get_velocity,
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # # #ping velocity from tello
+        # self.create_timer(
+        #     timer_period_sec=0.01,
+        #     callback=self.get_velocity,
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
 
         #ping hight from tello
         self.create_timer(
@@ -396,7 +396,8 @@ class API(Node):
         left_right = int(msg.twist.linear.y * -100)
         forward_backward = int(msg.twist.linear.x * 100)
         up_down = int(msg.twist.linear.z * 100)
-        yaw = int(msg.twist.angular.z * -100)
+        # yaw = int(msg.twist.angular.z * -100)
+        yaw = int(msg.twist.angular.z * -100 / 2.2)
 
         if self.takeoff:
             self.tello.send_rc_control(
