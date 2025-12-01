@@ -14,7 +14,10 @@ tello/control/pose_publisher:
 
     waypoint_1:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
+        position:
+          x: 0.0
+          y: 0.0
+          z: 1.0
         orientation:  # 0°
           x: 0.0
           y: 0.0
@@ -23,35 +26,47 @@ tello/control/pose_publisher:
 
     waypoint_2:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 90°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: 0.7071
 
     waypoint_3:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.0
-          w: 1.0
+          z: 1.0
+        orientation:  # 180°
+          x: 0.0
+          y: 0.0
+          z: 1.0
+          w: 0.0
 
     waypoint_4:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 270°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: -0.7071
 
     waypoint_5:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
+          x: 0.0
+          y: 0.0
+          z: 1.0
+        orientation:  # 360° (=0°)
           x: 0.0
           y: 0.0
           z: 0.0
@@ -59,35 +74,47 @@ tello/control/pose_publisher:
 
     waypoint_6:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 90°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: 0.7071
 
     waypoint_7:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.0
-          w: 1.0
+          z: 1.0
+        orientation:  # 180°
+          x: 0.0
+          y: 0.0
+          z: 1.0
+          w: 0.0
 
     waypoint_8:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 270°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: -0.7071
 
     waypoint_9:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
+          x: 0.0
+          y: 0.0
+          z: 1.0
+        orientation:  # 360°
           x: 0.0
           y: 0.0
           z: 0.0
@@ -95,88 +122,118 @@ tello/control/pose_publisher:
 
     waypoint_10:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 0° (start of next cycle)
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 1.0
 
     waypoint_11:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.0
-          w: 1.0
+          z: 1.0
+        orientation:  # 90°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: 0.7071
 
     waypoint_12:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 180°
+          x: 0.0
+          y: 0.0
+          z: 1.0
+          w: 0.0
 
     waypoint_13:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.0
-          w: 1.0
+          z: 1.0
+        orientation:  # 270°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: -0.7071
 
     waypoint_14:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 360° (=0°)
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 1.0
 
     waypoint_15:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.0
-          w: 1.0
+          z: 1.0
+        orientation:  # 90°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: 0.7071
 
     waypoint_16:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 180°
+          x: 0.0
+          y: 0.0
+          z: 1.0
+          w: 0.0
 
     waypoint_17:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 0°
+        position:
+          x: 0.0
+          y: 0.0
+          z: 1.0
+        orientation:  # 270°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: -0.7071
+
+    waypoint_18:
+      pose:
+        position:
+          x: 0.0
+          y: 0.0
+          z: 1.0
+        orientation:  # 360°
           x: 0.0
           y: 0.0
           z: 0.0
           w: 1.0
 
-    waypoint_18:
-      pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
-          x: 0.0
-          y: 0.0
-          z: 0.3827
-          w: 0.9239
-
     waypoint_19:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
+        position:
+          x: 0.0
+          y: 0.0
+          z: 1.0
         orientation:  # 0°
           x: 0.0
           y: 0.0
@@ -185,9 +242,12 @@ tello/control/pose_publisher:
 
     waypoint_20:
       pose:
-        position: {x: 0.0, y: 0.0, z: 0.7}
-        orientation:  # 45°
+        position:
           x: 0.0
           y: 0.0
-          z: 0.3827
-          w: 0.9239
+          z: 1.0
+        orientation:  # 90°
+          x: 0.0
+          y: 0.0
+          z: 0.7071
+          w: 0.7071

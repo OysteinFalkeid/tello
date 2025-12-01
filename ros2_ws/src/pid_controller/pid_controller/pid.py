@@ -32,7 +32,7 @@ class PID(Node):
         self.twist_array_filter= [np.array([0, 0, 0, 0]).astype(float), np.array([0, 0, 0, 0]).astype(float), np.array([0, 0, 0, 0]).astype(float)]
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.40, 0.40, 1.0, 0.8], dtype=float)
+        self.Kp = np.array([0.40, 0.40, 1.0, 0.5], dtype=float)
         self.Kd = np.array([0.02, 0.02, 0.1, 0.0], dtype=float)
         self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float) 
 

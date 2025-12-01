@@ -171,7 +171,7 @@ class API(Node):
         #     callback_group=MutuallyExclusiveCallbackGroup()
         # )
 
-        # # #ping velocity from tello
+        # #ping velocity from tello
         # self.create_timer(
         #     timer_period_sec=0.01,
         #     callback=self.get_velocity,
@@ -312,7 +312,7 @@ class API(Node):
     #     cov = np.zeros((6, 6))
     #     cov[0, 0] = 0.2   # var(vx)
     #     cov[1, 1] = 0.2   # var(vy)
-    #     cov[2, 2] = 0.2   # var(vz)
+    #     cov[2, 2] = 1.0   # var(vz)
     #     cov[3, 3] = 1.0   # var(wx) – large (we don't use it)
     #     cov[4, 4] = 1.0   # var(wy)
     #     cov[5, 5] = 1.0   # var(wz)
@@ -396,8 +396,8 @@ class API(Node):
         left_right = int(msg.twist.linear.y * -100)
         forward_backward = int(msg.twist.linear.x * 100)
         up_down = int(msg.twist.linear.z * 100)
-        # yaw = int(msg.twist.angular.z * -100)
-        yaw = int(msg.twist.angular.z * -100 / 2.2)
+        yaw = int(msg.twist.angular.z * -100)
+        # yaw = int(msg.twist.angular.z * -100 / 2.2)
 
         if self.takeoff:
             self.tello.send_rc_control(

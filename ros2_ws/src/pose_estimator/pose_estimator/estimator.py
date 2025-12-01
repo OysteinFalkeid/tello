@@ -170,31 +170,37 @@ class Estimator(Node):
                     self.markers_odom_detected[marker.marker_id] = matrix_in_odom
                 
                 pose_estimation_list = []
-                error_list = []
 
                 for key in self.markers_odom_detected.keys():
                     if key in self.markers_map.keys():
-                        error = self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key])
-                        error_list.append(error)
                         pose_estimaton = self.odometry_matrix @ (self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key]))
                         pose_estimation_list.append(pose_estimaton)
 
-                for i, estimation in enumerate(pose_estimation_list):
-
+                for estimation in pose_estimation_list:
                     message = PoseWithCovarianceStamped()
                     message.header.frame_id = "odom"
                     message.header.stamp = msg.header.stamp
                     message.pose.pose = self.matrix_to_pose(estimation)
-                    message.pose.covariance = (np.array([
-                        [10.0,      0,        0,        0,         0,         0      ],
-                        [0,        10.0,      0,        0,         0,         0      ],
-                        [0,        0,        10.0,      0,         0,         0      ],
-                        [0,        0,        0,        10.0,        0,         0     ],
-                        [0,        0,        0,        0,         10.0,        0     ],
-                        [0,        0,        0,        0,         0,         10.0    ]
-                        ]) * math.sqrt(np.sum(np.array([error_list[i][0, 3]**2, error_list[i][1, 3]**2, error_list[i][2, 3]**2]))) * 4).astype(float).flatten().tolist()
-                    
+
+                    dist = math.sqrt(
+                        estimation[0, 3]**2 +
+                        estimation[1, 3]**2 +
+                        estimation[2, 3]**2
+                    )
+
+                    base_cov = np.array([
+                        [10.0, 0,    0,    0,    0,    0],
+                        [0,   10.0,  0,    0,    0,    0],
+                        [0,    0,   10.0,  0,    0,    0],
+                        [0,    0,    0,   10.0,  0,    0],
+                        [0,    0,    0,    0,   10.0,  0],
+                        [0,    0,    0,    0,    0,   10.0],
+                    ])
+
+                    message.pose.covariance = (base_cov * dist * 4).astype(float).flatten().tolist()
+
                     self.publisher_pose.publish(message)
+
 
 
             except Exception as e:
