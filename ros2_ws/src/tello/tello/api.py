@@ -328,7 +328,7 @@ class API(Node):
                 [0.0, 0.0, 0.0, 1.0,  0.0,  0.0],
                 [0.0, 0.0, 0.0, 0.0,  1.0,  0.0],
                 [0.0, 0.0, 0.0, 0.0,  0.0,  1.0],
-            ]) * 10).flatten().tolist()
+            ]) * 2).flatten().tolist()
 
             self.publisher_hight.publish(message)
 

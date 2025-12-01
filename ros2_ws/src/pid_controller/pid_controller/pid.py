@@ -25,6 +25,8 @@ class PID(Node):
     def __init__(self):
         super().__init__("PID")
 
+        self.I = 0
+
         self.x_test = 0.1
         self.z_test = 0.0
         
@@ -57,7 +59,8 @@ class PID(Node):
         self.Kd = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
-        self.Ki = np.array([0.15, 0.15, 0.25, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
+        # self.Ki = np.array([0.15, 0.15, 0.25, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
+        self.Ki = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
         # z between 110 and 130 isntead of 70 to 90
 
         self.error_prev = np.zeros(4, dtype=float)
@@ -178,8 +181,8 @@ class PID(Node):
 
         self.twist_array = np.sum(self.twist_array_filter, axis=0) / 3
 
-        # error in base_link frame
-        error = self.twist_array  # [ex, ey, ez, epsi]
+        # # error in base_link frame
+        # error = self.twist_array  # [ex, ey, ez, epsi]
 
         # -----------------------
         # error in base_link frame
@@ -234,11 +237,11 @@ class PID(Node):
         self.error_int += error * dt
         # clamp integral
         # self.error_int = np.clip(self.error_int, -0.2, 0.2)
-        I = self.Ki * self.error_int
+        self.I = self.Ki * self.error_int + self.I
 
-        I = np.clip(I, -0.008, 0.008)
+        self.I = np.clip(self.I, -0.008, 0.008)
 
-        u = P + D + I
+        u = P + D + self.I
 
         # saturate per axis
         u = np.clip(u, -self.u_max, self.u_max)
