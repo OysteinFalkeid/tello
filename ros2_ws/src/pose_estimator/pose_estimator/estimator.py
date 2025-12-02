@@ -174,27 +174,45 @@ class Estimator(Node):
 
                 for key in self.markers_odom_detected.keys():
                     if key in self.markers_map.keys():
-                        error = self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key])
-                        error_list.append(error)
-                        pose_estimaton = self.odometry_matrix @ (self.markers_map[key] @ tf_transformations.inverse_matrix(self.markers_odom_detected[key]))
-                        pose_estimation_list.append(pose_estimaton)
+                        T_odom_marker = self.markers_map[key]
+                        T_drone_marker = self.markers_odom_detected[key]
+
+                        # Marker-based drone pose in odom
+                        T_odom_drone_aruco = T_odom_marker @ tf_transformations.inverse_matrix(T_drone_marker)
+                        pose_estimation_list.append(T_odom_drone_aruco)
+
+                        # Difference between odom EKF pose and ArUco-based pose
+                        delta = tf_transformations.inverse_matrix(self.odometry_matrix) @ T_odom_drone_aruco
+                        error_list.append(delta)
+
 
                 for i, estimation in enumerate(pose_estimation_list):
+
+                    delta = error_list[i]
+
+                    pos_err = math.sqrt(
+                        delta[0, 3]**2 +
+                        delta[1, 3]**2 +
+                        delta[2, 3]**2
+                    )
+
+                    cov = (np.array([
+                        [10.0, 0,    0,    0,    0,    0],
+                        [0,    10.0, 0,    0,    0,    0],
+                        [0,    0,    10.0, 0,    0,    0],
+                        [0,    0,    0,    10.0, 0,    0],
+                        [0,    0,    0,    0,    10.0, 0],
+                        [0,    0,    0,    0,    0,    10.0],
+                    ]) * max(1.0, pos_err * 4.0)).astype(float).flatten().tolist()
 
                     message = PoseWithCovarianceStamped()
                     message.header.frame_id = "odom"
                     message.header.stamp = msg.header.stamp
                     message.pose.pose = self.matrix_to_pose(estimation)
-                    message.pose.covariance = (np.array([
-                        [10.0,      0,        0,        0,         0,         0      ],
-                        [0,        10.0,      0,        0,         0,         0      ],
-                        [0,        0,        10.0,      0,         0,         0      ],
-                        [0,        0,        0,        10.0,        0,         0     ],
-                        [0,        0,        0,        0,         10.0,        0     ],
-                        [0,        0,        0,        0,         0,         10.0    ]
-                        ]) * math.sqrt(np.sum(np.array([error_list[i][0, 3]**2, error_list[i][1, 3]**2, error_list[i][2, 3]**2]))) * 4).astype(float).flatten().tolist()
-                    
+                    message.pose.covariance = cov
+
                     self.publisher_pose.publish(message)
+
 
 
             except Exception as e:
