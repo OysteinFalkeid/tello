@@ -58,7 +58,7 @@ tello/control/pose_publisher:
       pose:
         position:
           x: 0.45
-          y: -0.30
+          y: -0.40
           z: 0.80
         orientation:   # yaw = 0°
           x: 0.0
@@ -71,7 +71,7 @@ tello/control/pose_publisher:
       pose:
         position:
           x: 0.45
-          y: -0.30
+          y: -0.40
           z: 0.80
         orientation:   # yaw = 45°
           x: 0.0
@@ -83,7 +83,7 @@ tello/control/pose_publisher:
     waypoint_23:
       pose:
         position:
-          x: 0.95
+          x: 1.25
           y: -0.80
           z: 0.80
         orientation:   # yaw = 45°
@@ -96,30 +96,17 @@ tello/control/pose_publisher:
     waypoint_24:
       pose:
         position:
-          x: 0.95
+          x: 1.25
           y: -0.80
           z: 0.80
-        orientation:   # yaw = 90°
+        orientation:   # yaw = 135°
           x: 0.0
           y: 0.0
-          z: 0.7071067812
-          w: 0.7071067812
+          z: 0.9238795325
+          w: 0.3826834324
 
-    # Move to (1.55,-0.80), yaw 90°
+    # Move to (1.55,-0.80), yaw 135°
     waypoint_25:
-      pose:
-        position:
-          x: 1.55
-          y: -0.80
-          z: 0.80
-        orientation:   # yaw = 90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071067812
-          w: 0.7071067812
-
-    # Turn to 135°
-    waypoint_26:
       pose:
         position:
           x: 1.55
@@ -136,7 +123,7 @@ tello/control/pose_publisher:
       pose:
         position:
           x: 2.05
-          y: -0.30
+          y: -0.40
           z: 0.80
         orientation:   # yaw = 135°
           x: 0.0
@@ -149,7 +136,7 @@ tello/control/pose_publisher:
       pose:
         position:
           x: 2.05
-          y: -0.30
+          y: -0.40
           z: 0.80
         orientation:   # yaw = 180°
           x: 0.0
@@ -162,7 +149,7 @@ tello/control/pose_publisher:
       pose:
         position:
           x: 2.05
-          y: 0.30
+          y: 0.40
           z: 0.80
         orientation:   # yaw = 180°
           x: 0.0
@@ -175,7 +162,7 @@ tello/control/pose_publisher:
       pose:
         position:
           x: 2.05
-          y: 0.30
+          y: 0.40
           z: 0.80
         orientation:   # yaw = 225°
           x: 0.0
@@ -187,7 +174,7 @@ tello/control/pose_publisher:
     waypoint_31:
       pose:
         position:
-          x: 1.55
+          x: 1.25
           y: 0.80
           z: 0.80
         orientation:   # yaw = 225°
@@ -200,33 +187,7 @@ tello/control/pose_publisher:
     waypoint_32:
       pose:
         position:
-          x: 1.55
-          y: 0.80
-          z: 0.80
-        orientation:   # yaw = 270°
-          x: 0.0
-          y: 0.0
-          z: 0.7071067812
-          w: -0.7071067812
-
-    # Move to (0.95,0.80), yaw 270°
-    waypoint_33:
-      pose:
-        position:
-          x: 0.95
-          y: 0.80
-          z: 0.80
-        orientation:   # yaw = 270°
-          x: 0.0
-          y: 0.0
-          z: 0.7071067812
-          w: -0.7071067812
-
-    # Turn to 315°
-    waypoint_34:
-      pose:
-        position:
-          x: 0.95
+          x: 1.25
           y: 0.80
           z: 0.80
         orientation:   # yaw = 315°
@@ -235,25 +196,25 @@ tello/control/pose_publisher:
           z: 0.3826834324
           w: -0.9238795325
 
-    # Move to (0.45,0.30), yaw 315°
+    # Move to (0.95,0.80), yaw 315°
+    waypoint_33:
+      pose:
+        position:
+          x: 0.45
+          y: 0.80
+          z: 0.80
+        orientation:   # yaw = 315°
+          x: 0.0
+          y: 0.0
+          z: 0.3826834324
+          w: -0.9238795325
+
+    # Move to (0.45,0.30), yaw 0°
     waypoint_35:
       pose:
         position:
           x: 0.45
-          y: 0.30
-          z: 0.80
-        orientation:   # yaw = 315°
-          x: 0.0
-          y: 0.0
-          z: 0.3826834324
-          w: -0.9238795325
-
-    # Turn back to 0°
-    waypoint_36:
-      pose:
-        position:
-          x: 0.45
-          y: 0.30
+          y: 0.40
           z: 0.80
         orientation:   # yaw = 0°
           x: 0.0
