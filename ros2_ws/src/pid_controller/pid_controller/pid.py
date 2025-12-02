@@ -55,7 +55,7 @@ class PID(Node):
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 0.5, 1.2], dtype=float)
+        self.Kp = np.array([0.15, 0.15, 0.8, 1.0], dtype=float)
         self.Kd = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
@@ -66,7 +66,7 @@ class PID(Node):
         self.error_prev = np.zeros(4, dtype=float)
         self.error_int  = np.zeros(4, dtype=float)
 
-        self.u_max = np.array([0.30, 0.30, 0.40, 0.2], dtype=float)  # cmd_vel limits
+        self.u_max = np.array([0.2, 0.2, 0.20, 0.2], dtype=float)  # cmd_vel limits
         ##########
 
         self.wait_for_transform("odom", "base_link")
@@ -188,10 +188,10 @@ class PID(Node):
         # error in base_link frame
         error = self.twist_array  # [ex, ey, ez, epsi]
 
-        deadband = np.array([0.05, 0.05, 0.05, 0.03], dtype=float)
-        for i in range(4):
-            if abs(error[i]) < deadband[i]:
-                error[i] = 0.0
+        # deadband = np.array([0.05, 0.05, 0.05, 0.03], dtype=float)
+        # for i in range(4):
+        #     if abs(error[i]) < deadband[i]:
+        #         error[i] = 0.0
 
         # # publish error as PoseStamped
         # err_msg = PoseStamped()
