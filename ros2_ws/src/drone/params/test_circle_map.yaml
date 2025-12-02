@@ -1,0 +1,89 @@
+tello/aruco_opencv_map:
+  ros__parameters:
+    header:
+      frame_id: odom
+    markers: [6, 7, 9, 10, 11, 12, 18]
+
+    marker_6:
+      pose:
+        position:
+          x: 2.36     # 7.36 - 5
+          y: 0.00
+          z: 1.01
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_7:
+      pose:
+        position:
+          x: 1.41     # 6.41 - 5
+          y: 0.00
+          z: 0.78
+        orientation:
+          x: 0.5
+          y: 0.5
+          z: 0.5
+          w: 0.5
+
+    marker_9:
+      pose:
+        position:
+          x: 2.49     # 7.49 - 5
+          y: -0.35
+          z: 0.78
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+
+    marker_10:
+      pose:
+        position:
+          x: 1.21     # 6.21 - 5
+          y: 0.18
+          z: 0.78
+        orientation:
+          x: 0.0
+          y: -0.70710678
+          z: -0.70710678
+          w: 0.0
+
+    marker_11:
+      pose:
+        position:
+          x: 1.00     # 6.00 - 5
+          y: 0.00
+          z: 0.78
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
+  
+    marker_12:
+      pose:
+        position:
+          x: 1.21     # 6.21 - 5
+          y: -0.18
+          z: 0.78
+        orientation:
+          x: 0.70710678
+          y: 0.0
+          z: 0.0
+          w: 0.70710678
+
+    marker_18: 
+      pose:
+        position:
+          x: 2.49     # 7.49 - 5
+          y: 0.35
+          z: 0.78
+        orientation:
+          x: 0.5
+          y: -0.5
+          z: -0.5
+          w: 0.5
