@@ -1,14 +1,14 @@
 tello/control/pose_publisher:
   ros__parameters:
 
-    thresh_x: 0.25
-    thresh_y: 0.25
+    thresh_x: 0.2
+    thresh_y: 0.2
     thresh_z: 0.15
     thresh_total: 0.45
 
     header:
       frame_id: odom
-    waypoint: [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+    waypoint: [19,20,21,22,23,24,25,26,27,28,29]
 
     waypoint_19:
       pose:
@@ -25,10 +25,10 @@ tello/control/pose_publisher:
     waypoint_20:
       pose:
         position:
-          x: 0.40      # angle 180°
-          y: 0.00
+          x: 0.00
+          y: -0.40
           z: 0.80
-        orientation:   # yaw = 0° (facing +x toward plant)
+        orientation:   # yaw = 0°
           x: 0.0
           y: 0.0
           z: 0.0
@@ -37,97 +37,107 @@ tello/control/pose_publisher:
     waypoint_21:
       pose:
         position:
-          x: 0.6      # angle 225°
-          y: -0.65
+          x: 0.4
+          y: -0.40
           z: 0.80
-        orientation:   # yaw ≈ +45°
-          x: 0.0
-          y: 0.0
-          z: 0.3826834324
-          w: 0.9238795325
-
-    waypoint_22:
-      pose:
-        position:
-          x: 1.25      # angle 270°
-          y: -0.65
-          z: 0.80
-        orientation:   # yaw ≈ +90°
-          x: 0.0
-          y: 0.0
-          z: 0.7071067812
-          w: 0.7071067812
-
-    waypoint_23:
-      pose:
-        position:
-          x: 1.71      # angle 315°
-          y: -0.46
-          z: 0.80
-        orientation:   # yaw ≈ +135°
-          x: 0.0
-          y: 0.0
-          z: 0.9238795325
-          w: 0.3826834324
-
-    waypoint_24:
-      pose:
-        position:
-          x: 1.90      # angle   0°
-          y: 0.00
-          z: 0.80
-        orientation:   # yaw = 180° (facing back toward plant)
-          x: 0.0
-          y: 0.0
-          z: 1.0
-          w: 0.0
-
-    waypoint_25:
-      pose:
-        position:
-          x: 1.71      # angle  45°
-          y: 0.46
-          z: 0.80
-        orientation:   # yaw ≈ -135°
-          x: 0.0
-          y: 0.0
-          z: -0.9238795325
-          w: 0.3826834324
-
-    waypoint_26:
-      pose:
-        position:
-          x: 1.25      # angle  90°
-          y: 0.65
-          z: 0.80
-        orientation:   # yaw ≈ -90°
-          x: 0.0
-          y: 0.0
-          z: -0.7071067812
-          w: 0.7071067812
-
-    waypoint_27:
-      pose:
-        position:
-          x: 0.79      # angle 135°
-          y: 0.46
-          z: 0.80
-        orientation:   # yaw ≈ -45°
-          x: 0.0
-          y: 0.0
-          z: -0.3826834324
-          w: 0.9238795325
-
-    # Optional, to explicitly close the loop back to the front:
-    waypoint_28:
-      pose:
-        position:
-          x: 0.60
-          y: 0.00
-          z: 0.80
-        orientation:
+        orientation:   # yaw = 0° (shifted from 20)
           x: 0.0
           y: 0.0
           z: 0.0
           w: 1.0
 
+    waypoint_22:
+      pose:
+        position:
+          x: 0.95
+          y: -0.80
+          z: 0.80
+        orientation:   # yaw = 45°
+          x: 0.0
+          y: 0.0
+          z: 0.3826834324
+          w: 0.9238795325
+
+    waypoint_23:
+      pose:
+        position:
+          x: 1.55
+          y: -0.80
+          z: 0.80
+        orientation:   # yaw = 90°
+          x: 0.0
+          y: 0.0
+          z: 0.7071067812
+          w: 0.7071067812
+
+    waypoint_24:
+      pose:
+        position:
+          x: 2.05
+          y: -0.40
+          z: 0.80
+        orientation:   # yaw = 135°
+          x: 0.0
+          y: 0.0
+          z: 0.9238795325
+          w: 0.3826834324
+
+    waypoint_25:
+      pose:
+        position:
+          x: 2.05
+          y: 0.50
+          z: 0.80
+        orientation:   # yaw = 180°
+          x: 0.0
+          y: 0.0
+          z: 1.0
+          w: 0.0
+
+    waypoint_26:
+      pose:
+        position:
+          x: 1.55
+          y: 0.80
+          z: 0.80
+        orientation:   # yaw = 225°
+          x: 0.0
+          y: 0.0
+          z: 0.9238795325
+          w: -0.3826834324
+
+    waypoint_27:
+      pose:
+        position:
+          x: 0.95
+          y: 0.80
+          z: 0.80
+        orientation:   # yaw = 270°
+          x: 0.0
+          y: 0.0
+          z: 0.7071067812
+          w: -0.7071067812
+
+    waypoint_28:
+      pose:
+        position:
+          x: 0.45
+          y: 0.50
+          z: 0.80
+        orientation:   # yaw = 315°
+          x: 0.0
+          y: 0.0
+          z: 0.3826834324
+          w: -0.9238795325
+
+    waypoint_29:
+      pose:
+        position:
+          x: 0.45
+          y: 0.00
+          z: 0.80
+        orientation:   # yaw = 0°
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 1.0
