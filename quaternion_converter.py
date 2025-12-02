@@ -1,6 +1,6 @@
 import math
 yaw_radians = 0.0
-yaw_deg = -45.0
+yaw_deg = -90.0
 if yaw_deg:
     yaw_radians = yaw_deg / 180.0 * math.pi
 print(f"x: 0.0")

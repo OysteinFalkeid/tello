@@ -201,6 +201,7 @@ class Estimator(Node):
                     self.get_logger().warning(f"{e}")
 
     def get_map(self, msg: ArucoDetection):
+
         markers: list[MarkerPose] = msg.markers
 
         self.markers_map: dict[int, np.ndarray] = {}

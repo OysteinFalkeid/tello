@@ -400,8 +400,8 @@ tello/control/pose_publisher:
         orientation:
           x: 0.0
           y: 0.0
-          z: -0.3420201433256687
-          w: 0.984807753012208
+          z: 0.0
+          w: 1.0
 
 
     waypoint_22:
@@ -413,8 +413,8 @@ tello/control/pose_publisher:
         orientation:
           x: 0.0
           y: 0.0
-          z: -0.7071067811865475
-          w: 0.9238795325112867
+          z: 0.0
+          w: 1.0
 
     waypoint_23:
       pose:
@@ -425,8 +425,8 @@ tello/control/pose_publisher:
         orientation:
           x: 0.0
           y: 0.0
-          z: -1.0
-          w: 0.7071067811865476
+          z: 0.0
+          w: 1.0
 
     waypoint_24:
       pose:
@@ -438,7 +438,7 @@ tello/control/pose_publisher:
           x: 0.0
           y: 0.0
           z: 0.0
-          w: 0.0
+          w: 1.0
 
     waypoint_25:
       pose:
@@ -449,8 +449,8 @@ tello/control/pose_publisher:
         orientation:
           x: 0.0
           y: 0.0
-          z: 0.7071067811865475
-          w: -0.3826834323650897
+          z: 0.0
+          w: 1.0
 
     waypoint_26:
       pose:
@@ -461,8 +461,8 @@ tello/control/pose_publisher:
         orientation:
           x: 0.0
           y: 0.0
-          z: 1.0
-          w: -0.7071067811865475
+          z: 0.0
+          w: 1.0
 
     waypoint_27:
       pose:
@@ -473,8 +473,8 @@ tello/control/pose_publisher:
         orientation:
           x: 0.0
           y: 0.0
-          z: 0.7071067811865477
-          w: -0.9238795325112867
+          z: 0.0
+          w: 1.0
 
     waypoint_28:
       pose:

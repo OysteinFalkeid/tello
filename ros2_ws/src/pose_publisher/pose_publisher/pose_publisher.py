@@ -82,7 +82,7 @@ class PosePublisherNode(Node):
         # self.poses = self.load_waypoints()
         # if not self.poses:
         #     self.get_logger().error('No waypoints loaded. Node will still run but publish nothing useful.')
-        self.current_index = 16
+        self.current_index = 0
 
         # Keep track of last N "is stable" results
         self.stable_flags = deque(maxlen=self.STABLE_SAMPLES)
@@ -201,7 +201,7 @@ class PosePublisherNode(Node):
 
         # Check if the last N samples are all stable
         if (len(self.stable_flags) >= self.STABLE_SAMPLES):
-            if self.current_index > 16:
+            if self.current_index > 0:
                 self.advance_waypoint()
             # pass
 
