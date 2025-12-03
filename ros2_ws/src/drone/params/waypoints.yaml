@@ -44,7 +44,7 @@ tello/control/pose_publisher:
         position:
           x: 1.4
           y: 0.0
-          z: 0.4
+          z: 0.3
         orientation:
           x: 0.0
           y: 0.0
