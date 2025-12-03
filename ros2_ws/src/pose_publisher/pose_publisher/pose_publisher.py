@@ -205,8 +205,8 @@ class PosePublisherNode(Node):
         # Check if the last N samples are all stable
         if (len(self.stable_flags) >= self.STABLE_SAMPLES):
             if self.current_index > 0:
-                # self.advance_waypoint()
-                pass
+                self.advance_waypoint()
+                # pass
 
     # def cmd_error_callback(self, msg: TwistStamped):
     #     """Store whether this error sample is within all thresholds."""
