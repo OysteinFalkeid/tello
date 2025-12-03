@@ -58,7 +58,7 @@ def generate_launch_description():
     pose_publusher_params = PathJoinSubstitution([
         get_package_share_directory("drone"),
         "params",
-        "test_circle_waypoints.yaml",
+        "test_seperate_rotation.yaml",
     ])
 
     rviz2_node = Node(
