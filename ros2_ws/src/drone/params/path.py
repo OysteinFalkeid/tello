@@ -9,7 +9,7 @@ from pathlib import Path
 # ---------------------------------------------------------
 # SET YOUR YAML FILE HERE
 # ---------------------------------------------------------
-YAML_FILE = "/home/hakonb/tello/ros2_ws/src/drone/params/test_seperate_rotation.yaml"
+YAML_FILE = "/home/hakonb/tello/ros2_ws/src/drone/params/test_circle_waypoints.yaml"
 # ---------------------------------------------------------
 
 # Plant box parameters
