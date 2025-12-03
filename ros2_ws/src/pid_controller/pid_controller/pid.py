@@ -55,8 +55,8 @@ class PID(Node):
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 0.8, 1.0], dtype=float)
-        self.Kd = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
+        self.Kp = np.array([0.3, 0.3, 1.0, 0.8], dtype=float)
+        self.Kd = np.array([0.0, 0.0, 0.1, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
         # self.Ki = np.array([0.15, 0.15, 0.25, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
@@ -66,7 +66,7 @@ class PID(Node):
         self.error_prev = np.zeros(4, dtype=float)
         self.error_int  = np.zeros(4, dtype=float)
 
-        self.u_max = np.array([0.2, 0.2, 0.20, 0.2], dtype=float)  # cmd_vel limits
+        self.u_max = np.array([0.15, 0.15, 0.20, 0.2], dtype=float)  # cmd_vel limits
         ##########
 
         self.wait_for_transform("odom", "base_link")
@@ -188,6 +188,21 @@ class PID(Node):
         # error in base_link frame
         error = self.twist_array  # [ex, ey, ez, epsi]
 
+        # after you computed error = self.twist_array
+        # ex, ey, ez, epsi = error
+        # dist = math.sqrt(ex**2 + ey**2 + ez**2)
+
+        # DIST_CLOSE = 0.10                       # [m]
+        # YAW_ALIGN  = math.radians(10.0) / math.pi  # because you divided psi by pi
+
+        # yaw_only = dist < DIST_CLOSE and abs(epsi) > YAW_ALIGN
+
+        # if yaw_only:
+        #     error[0] = 0.0   # no x correction
+        #     error[1] = 0.0   # no y correction
+        #     # keep ez, epsi so you can hold height + yaw
+
+
         # deadband = np.array([0.05, 0.05, 0.05, 0.03], dtype=float)
         # for i in range(4):
         #     if abs(error[i]) < deadband[i]:
@@ -230,7 +245,8 @@ class PID(Node):
         P = self.Kp * error
 
         # D  (derivative of error: (e - e_prev)/dt)
-        D = self.Kd * ((error - self.error_prev) * dt)
+        D = self.Kd * ((error - self.error_prev) / dt)
+
         self.error_prev = error.copy()
 
         # I with anti-windup
@@ -250,6 +266,8 @@ class PID(Node):
         message = TwistStamped()
         message.header.frame_id = "base_link"
         message.header.stamp = msg.header.stamp
+        # if error[0] < 0.0:
+        #     u[0] *= 1.75
 
         message.twist.linear.x  = float(u[0])
         message.twist.linear.y  = float(u[1])

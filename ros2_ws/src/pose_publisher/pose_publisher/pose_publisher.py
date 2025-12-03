@@ -27,7 +27,7 @@ class PosePublisherNode(Node):
         self.FRAME_ID             = 'odom'
 
         # Publishing rate (seconds)
-        self.PUBLISH_PERIOD       = 0.5
+        self.PUBLISH_PERIOD       = 0.1
 
         # Stability logic
         self.STABLE_SAMPLES       = 10        # how many readings must be below thresholds
@@ -37,7 +37,7 @@ class PosePublisherNode(Node):
         self.THRESH_Z             = 0.0
         self.THRESH_TOTAL         = 0.0
 
-        self.THRESH_ANGLE = 0.25
+        self.THRESH_ANGLE = 0.2
 
         # Waypoint YAML location
         self.WAYPOINT_PACKAGE     = 'drone'               # ROS2 package containing the YAML
@@ -45,7 +45,7 @@ class PosePublisherNode(Node):
 
         self.THRESH_X = self.get_parameter_or("thresh_x", self.THRESH_X).value
         self.THRESH_Y = self.get_parameter_or("thresh_y", self.THRESH_Y).value
-        self.THRESH_Z = self.get_parameter_or("thresh_y", self.THRESH_Z).value
+        self.THRESH_Z = self.get_parameter_or("thresh_z", self.THRESH_Z).value
         self.THRESH_TOTAL = self.get_parameter_or("thresh_total", self.THRESH_TOTAL).value
 
         self.markers_id_list = self.get_parameter("waypoint").value
@@ -186,7 +186,10 @@ class PosePublisherNode(Node):
         dist = math.sqrt(err_x**2 + err_y**2 + err_z**2)
         within_total = dist < self.THRESH_TOTAL
 
-        within_angle = self.THRESH_ANGLE > self.pose_to_psi(msg.pose)
+        # within_angle = self.THRESH_ANGLE > self.pose_to_psi(msg.pose)
+        yaw_err = self.pose_to_psi(msg.pose)
+        within_angle = abs(yaw_err) < self.THRESH_ANGLE
+
 
         is_stable = within_axes and within_total and within_angle
 
@@ -202,8 +205,8 @@ class PosePublisherNode(Node):
         # Check if the last N samples are all stable
         if (len(self.stable_flags) >= self.STABLE_SAMPLES):
             if self.current_index > 0:
-                self.advance_waypoint()
-            # pass
+                # self.advance_waypoint()
+                pass
 
     # def cmd_error_callback(self, msg: TwistStamped):
     #     """Store whether this error sample is within all thresholds."""

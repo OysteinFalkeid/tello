@@ -152,7 +152,7 @@ class API(Node):
 
         #logging status of tello
         self.create_timer(
-            timer_period_sec=15,
+            timer_period_sec=1,
             callback=self.tello_status_report,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
