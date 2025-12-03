@@ -100,20 +100,20 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
         
-        self.publisher_acceleration = self.create_publisher(
-            msg_type=Imu,
-            topic="control/imu0_acceleration",
-            qos_profile=QoSProfile(depth=1),
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # self.publisher_acceleration = self.create_publisher(
+        #     msg_type=Imu,
+        #     topic="control/imu0_acceleration",
+        #     qos_profile=QoSProfile(depth=1),
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
 
-        self.publisher_velocity = self.create_publisher(
-            msg_type=TwistWithCovarianceStamped,
-            # msg_type=TwistStamped,
-            topic="control/twist0_velocity",
-            qos_profile=QoSProfile(depth=1),
-            callback_group=MutuallyExclusiveCallbackGroup()
-        )
+        # self.publisher_velocity = self.create_publisher(
+        #     msg_type=TwistWithCovarianceStamped,
+        #     # msg_type=TwistStamped,
+        #     topic="control/twist0_velocity",
+        #     qos_profile=QoSProfile(depth=1),
+        #     callback_group=MutuallyExclusiveCallbackGroup()
+        # )
         
         self.publisher_hight = self.create_publisher(
             msg_type=PoseWithCovarianceStamped,
