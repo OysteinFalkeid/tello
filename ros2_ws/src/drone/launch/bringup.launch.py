@@ -36,12 +36,6 @@ def generate_launch_description():
         'params', 
         'aruco_tracker_config.yaml'
         ])
-    
-    # aruco_map_params = PathJoinSubstitution([
-    #     get_package_share_directory("drone"),
-    #     "params",
-    #     "example_map.yaml",
-    # ])
 
     aruco_map_params = PathJoinSubstitution([
         get_package_share_directory("drone"),

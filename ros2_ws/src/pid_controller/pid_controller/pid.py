@@ -55,7 +55,7 @@ class PID(Node):
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 0.5, 1.2], dtype=float)
+        self.Kp = np.array([0.15, 0.15, 0.5, 0.8], dtype=float)
         self.Kd = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
@@ -84,12 +84,6 @@ class PID(Node):
             callback_group=MutuallyExclusiveCallbackGroup(),
             qos_profile=QoSProfile(depth=10),
         )
-
-        # self.create_timer(
-        #     timer_period_sec=5,
-        #     callback=self.test_pid,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
 
         self.create_subscription(
             msg_type=Odometry,
@@ -164,6 +158,8 @@ class PID(Node):
         self.goal_pose = msg
 
         goal_pose: PoseStamped = tf2_geometry_msgs.do_transform_pose_stamped(self.goal_pose, self.transform)
+
+        # Publish error as pose
         self.pid_error_pub.publish(goal_pose)
 
         x = goal_pose.pose.position.x * 1.0
@@ -181,9 +177,6 @@ class PID(Node):
 
         self.twist_array = np.sum(self.twist_array_filter, axis=0) / 3
 
-        # # error in base_link frame
-        # error = self.twist_array  # [ex, ey, ez, epsi]
-
         # -----------------------
         # error in base_link frame
         error = self.twist_array  # [ex, ey, ez, epsi]
@@ -192,21 +185,6 @@ class PID(Node):
         for i in range(4):
             if abs(error[i]) < deadband[i]:
                 error[i] = 0.0
-
-        # # publish error as PoseStamped
-        # err_msg = PoseStamped()
-        # err_msg.header.stamp = msg.header.stamp
-        # err_msg.header.frame_id = "base_link"
-
-        # err_msg.pose.position.x = float(error[0])
-        # err_msg.pose.position.y = float(error[1])
-        # err_msg.pose.position.z = float(error[2])
-
-        # # stash yaw error in orientation.z (or wherever you like)
-        # err_msg.pose.orientation.z = float(error[3])
-        # err_msg.pose.orientation.w = 1.0
-
-        # self.pid_error_pub.publish(err_msg)
 
 
         # time step
@@ -235,10 +213,7 @@ class PID(Node):
 
         # I with anti-windup
         self.error_int += error * dt
-        # clamp integral
-        # self.error_int = np.clip(self.error_int, -0.2, 0.2)
         self.I = self.Ki * self.error_int + self.I
-
         self.I = np.clip(self.I, -0.008, 0.008)
 
         u = P + D + self.I
@@ -258,74 +233,11 @@ class PID(Node):
 
         self.publisher_cmd_vel.publish(message)
 
-
-        # self.twist_array_P = self.twist_array
-        # # self.twist_array_P = np.array([x, y, z, psi]).astype(float)
-        # # self.twist_array_D = (self.twist_array_1 - self.twist_array) * self.delta_time
-        # # self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
-
-        # # for i, value in enumerate(self.twist_array_I):
-        # #     if value > 0.2:
-        # #         self.twist_array_I[i] = 0.2
-        # #     elif value < -0.2:
-        # #         self.twist_array_I[i] = -0.2
-
-        # self.twist_array_PID = self.twist_array_P * 0.15 * 2 # + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
-
-        # for i, value in enumerate(self.twist_array_PID):
-        #     if value > 0.8:
-        #         self.twist_array_PID[i] = 0.8
-        #     elif value < -0.8:
-        #         self.twist_array_PID[i] = -0.8
-        
-        # # self.get_logger().info(f"{self.twist_array_PID}")
-        # message = TwistStamped()
-        # message.header.frame_id = "base_link"
-        # message.header.stamp = msg.header.stamp
-
-        # message.twist.linear.x = self.twist_array_PID[0]
-        # message.twist.linear.y = self.twist_array_PID[1]
-        # message.twist.linear.z = self.twist_array_PID[2]*2
-
-        # message.twist.angular.z = self.twist_array_PID[3]*2
-
-        # self.publisher_cmd_vel.publish(message)
-
-        # self.twist_array_1 = self.twist_array
-
     def pose_to_psi(self, pose: Pose):
         return math.atan2(2*(pose.orientation.w*pose.orientation.z + pose.orientation.x*pose.orientation.y), 1 - 2*(pose.orientation.y*pose.orientation.y + pose.orientation.z*pose.orientation.z))
     
     def subscribe_base_link(self, msg: Odometry):
         odometry_pose = msg.pose.pose
-
-    # def test_pid(self):
-    #     self.goal_pose = PoseStamped()
-    #     self.goal_pose.header.frame_id = "odom"
-    #     self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-    #     self.x_test = self.x_test * -1
-    #     self.z_test = self.z_test * -1
-    #     self.goal_pose.pose.position.x = self.x_test
-    #     self.goal_pose.pose.position.z = 1.0 #self.z_test
-
-    def test_pid(self):
-        self.goal_pose = PoseStamped()
-        self.goal_pose.header.frame_id = "odom"
-        self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-
-        if self.z_toggle:
-            z_goal = self.z_low   # 0.8 m
-        else:
-            z_goal = self.z_high  # 0.9 m
-
-        self.z_toggle = not self.z_toggle
-
-        self.goal_pose.pose.position.x = 0.0
-        self.goal_pose.pose.position.y = 0.0
-        self.goal_pose.pose.position.z = z_goal
-        self.goal_pose.pose.orientation.w = 1.0
-
-        self.get_logger().info(f"New Z step goal: {z_goal:.2f} m")
 
 
 

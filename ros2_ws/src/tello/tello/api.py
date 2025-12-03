@@ -42,8 +42,6 @@ class API(Node):
     def __init__(self):
         super().__init__("API")
 
-        self.takeoff = False
-
         third_party = os.path.join(get_package_share_directory('tello'), 'third_party')
 
         if third_party not in sys.path:
@@ -51,16 +49,36 @@ class API(Node):
 
         from djitellopy import Tello
 
-        while connect_to_wifi("", self.get_logger().info):
-            pass
+        self.camera_info = CameraInfo()
+
+        self.camera_info = CameraInfo()
+        self.camera_info.header.frame_id = 'camera'
+
+        self.camera_info.height = 720
+        self.camera_info.width = 960
+        self.camera_info.distortion_model = 'plumb_bob'
+        self.camera_info.d = [-0.016272, 0.093492, 0.000093, 0.002999, 0.000000]
+        self.camera_info.k = [
+                            929.562627, 0.000000,   487.474037, 
+                            0.000000,   928.604856, 363.165223, 
+                            0.000000,   0.000000,   1.000000
+                            ]
+        self.camera_info.r = [
+                            1.000000, 0.000000, 0.000000, 
+                            0.000000, 1.000000, 0.000000, 
+                            0.000000, 0.000000, 1.000000
+                            ]
+        self.camera_info.p = [
+                            937.878723, 0.000000,   489.753885, 0.000000, 
+                            0.000000,   939.156738, 363.172139, 0.000000, 
+                            0.000000,   0.000000,   1.000000,   0.000000
+                            ]
 
         self.tello = Tello()
 
         self.tello.connect()
         self.tello.streamon()
         self.frame_backend = self.tello.get_frame_read()
-
-        self.flying = False
         
         self.bridge = CvBridge()
 
@@ -164,19 +182,6 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
-        # #ping acceleration from tello
-        # self.create_timer(
-        #     timer_period_sec=0.01,
-        #     callback=self.get_acceleration,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
-
-        # #ping velocity from tello
-        # self.create_timer(
-        #     timer_period_sec=0.01,
-        #     callback=self.get_velocity,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
 
         #ping hight from tello
         self.create_timer(
@@ -242,75 +247,6 @@ class API(Node):
         self.get_logger().info(F"Flight_time {self.flight_time}")
         self.get_logger().info("---------------------------------------------")
 
-    def get_acceleration(self):
-        x = self.tello.get_acceleration_x() / 100.0
-        y = self.tello.get_acceleration_y() / -100.0
-        z = self.tello.get_acceleration_z() / 100.0
-
-        message = Imu()
-        message.header.frame_id = "base_link"
-        message.header.stamp = self.get_clock().now().to_msg()
-        message.linear_acceleration.x = x
-        message.linear_acceleration.y = y
-        message.linear_acceleration.z = z
-
-        message.linear_acceleration_covariance = np.array([
-            [1.0, 0.1, 0.1, 0.0,  0.0,  0.0],
-            [0.1, 1.0, 0.1, 0.0,  0.0,  0.0],
-            [0.1, 0.1, 1.0, 0.0,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.01,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.0,  0.01],
-        ]).flatten().tolist()
-
-        self.publisher_acceleration.publish(message)
-
-    def get_velocity(self):
-        x = self.tello.get_speed_x() / 100.0
-        y = self.tello.get_speed_y() / -100.0
-        z = self.tello.get_speed_z() / 100.0
-        
-        # self.velocity_list.append(np.array([[x, -y, z], [0, 0, 0]]).astype(float).T)
-
-
-        # velocity = np.array([[x, -y, z], [0, 0, 0]]).astype(float).T
-
-        # message = TwistWithCovarianceStamped()
-        # message.header.frame_id = "base_link"
-        # message.header.stamp = self.get_clock().now().to_msg()
-
-        # message.twist.twist.linear.x = velocity[0, 0]
-        # message.twist.twist.linear.y = velocity[1, 0]
-        # message.twist.twist.linear.z = velocity[2, 0]
-        # # message.twist.twist.angular.x = velocity[0, 1]
-        # # message.twist.twist.angular.y = velocity[1, 1]
-        # # message.twist.twist.angular.z = velocity[2, 1]        
-
-        message = TwistWithCovarianceStamped()
-        # message = TwistStamped()
-        message.header.frame_id = "base_link"
-        message.header.stamp = self.get_clock().now().to_msg()
-
-        message.twist.twist.linear.x = x
-        message.twist.twist.linear.y = y
-        message.twist.twist.linear.z = z
-        
-        message.twist.covariance = np.array([
-            [1.0, 0.1, 0.1, 0.0,  0.0,  0.1],
-            [0.1, 1.0, 0.1, 0.0,  0.0,  0.1],
-            [0.1, 0.1, 1.0, 0.0,  0.0,  0.1],
-            [0.0, 0.0, 0.0, 0.01, 0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01, 0.0],
-            [0.1, 0.1, 0.1, 0.0,  0.0,  1.0],
-        ]).flatten().tolist()        
-        
-        # message.twist.linear.x = x
-        # message.twist.linear.y = y
-        # message.twist.linear.z = z
-        
-        if self.takeoff:
-            self.publisher_velocity.publish(message)
-
     def get_hight(self):
         # z = self.tello.get_height() / 100.0
         z = self.tello.get_distance_tof() / 100.0
@@ -341,7 +277,7 @@ class API(Node):
         up_down = int(msg.twist.linear.z * 100)
         yaw = int(msg.twist.angular.z * -100 / 1.2)
 
-        if self.takeoff:
+        if self.tello.is_flying:
             self.tello.send_rc_control(
                 left_right_velocity=left_right,
                 forward_backward_velocity=forward_backward,
@@ -352,13 +288,9 @@ class API(Node):
     def takeoff_land(self, msg: String):
         self.get_logger().info(f"{msg.data}")
         if self.tello.is_flying:
-            self.takeoff = False
             self.tello.land()
-            self.flying = False
         else:
             self.tello.takeoff()
-            self.flying = True
-            self.takeoff = True
 
     def e_stop(self, msg: String):
         self.shutdown()
@@ -371,19 +303,8 @@ class API(Node):
         self.tello.reboot()
 
     def publish_camera_info(self):
-        message = CameraInfo()
-        message.header.frame_id = 'camera'
-        message.header.stamp = self.get_clock().now().to_msg()
-
-        message.height = 720
-        message.width = 960
-        message.distortion_model = 'plumb_bob'
-        message.d = [-0.016272, 0.093492, 0.000093, 0.002999, 0.000000]
-        message.k = [929.562627, 0.000000, 487.474037, 0.000000, 928.604856, 363.165223, 0.000000, 0.000000, 1.000000]
-        message.r = [1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000]
-        message.p = [937.878723, 0.000000, 489.753885, 0.000000, 0.000000, 939.156738, 363.172139, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000]
-
-        self.publisher_camera_info.publish(message)
+        self.camera_info.header.stamp = self.get_clock().now().to_msg()
+        self.publisher_camera_info.publish(self.camera_info)
 
 
 def main():
