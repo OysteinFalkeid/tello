@@ -9,7 +9,7 @@ from sensor_msgs.msg import Image, CameraInfo
 from nav_msgs.msg import Odometry
 from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
 import tf2_ros
-import tf2_geometry_msgs 
+import tf2_geometry_msgs
 
 import os
 import sys
@@ -29,8 +29,8 @@ class PID(Node):
 
         self.x_test = 0.1
         self.z_test = 0.0
-        
-        
+
+
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
@@ -43,7 +43,7 @@ class PID(Node):
         self.secunds = 0.0
         self.twist_array = np.array([0, 0, 0, 0]).astype(float)
         self.twist_array_1 = np.array([0, 0, 0, 0]).astype(float)
-        self.twist_array_filter= [np.array([0, 0, 0, 0]).astype(float), np.array([0, 0, 0, 0]).astype(float), np.array([0, 0, 0, 0]).astype(float)]
+        self.twist_array_filter= [np.array([0, 0, 0, 0]).astype(float) for _ in range(5)]
         self.twist_array_P = np.array([0, 0, 0, 0]).astype(float)
         self.twist_array_D = np.array([0, 0, 0, 0]).astype(float)
         self.twist_array_I = np.array([0, 0, 0, 0]).astype(float)
@@ -55,18 +55,18 @@ class PID(Node):
         self.z_toggle = False
 
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 0.8, 1.0], dtype=float)
+        self.Kp = np.array([0.15, 0.15, 0.5, 0.8], dtype=float)
         self.Kd = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
         # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
         # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
-        # self.Ki = np.array([0.15, 0.15, 0.25, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
-        self.Ki = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
+        # self.Ki = np.array([0.15, 0.15, 0.25, 0.0], dtype=float)  # start with no Ki in x,y,yaw
+        self.Ki = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw
         # z between 110 and 130 isntead of 70 to 90
 
         self.error_prev = np.zeros(4, dtype=float)
         self.error_int  = np.zeros(4, dtype=float)
 
-        self.u_max = np.array([0.2, 0.2, 0.20, 0.2], dtype=float)  # cmd_vel limits
+        self.u_max = np.array([0.30, 0.30, 0.30, 0.2], dtype=float)  # cmd_vel limits
         ##########
 
         self.wait_for_transform("odom", "base_link")
@@ -113,7 +113,7 @@ class PID(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
-    
+
     def wait_for_transform(self, source_frame, target_frame):
         self.get_logger().info(f"Waiting for transform {source_frame} → {target_frame}...")
 
@@ -152,7 +152,7 @@ class PID(Node):
 
         sec, nanosec = self.get_clock().now().seconds_nanoseconds()
         secunds = sec + nanosec / 1000000000
-        self.delta_time = secunds - self.secunds 
+        self.delta_time = secunds - self.secunds
         self.secunds = sec + nanosec / 1000000000
 
         self.goal_pose = msg
@@ -172,10 +172,10 @@ class PID(Node):
 
         self.twist_array_filter[self.filter_index] = np.array([x, y, z, psi]).astype(float)
         self.filter_index += 1
-        if self.filter_index >= 3:
+        if self.filter_index >= 5:
             self.filter_index = 0
 
-        self.twist_array = np.sum(self.twist_array_filter, axis=0) / 3
+        self.twist_array = np.sum(self.twist_array_filter, axis=0) / 5
 
         # -----------------------
         # error in base_link frame
@@ -226,10 +226,10 @@ class PID(Node):
         D = self.Kd * ((error - self.error_prev) * dt)
         self.error_prev = error.copy()
 
-        # I with anti-windup
-        self.error_int += error * dt
-        self.I = self.Ki * self.error_int + self.I
-        self.I = np.clip(self.I, -0.008, 0.008)
+        # # I with anti-windup
+        # self.error_int += error * dt
+        # self.I = self.Ki * self.error_int + self.I
+        # self.I = np.clip(self.I, -0.008, 0.008)
 
         u = P + D + self.I
 
@@ -250,7 +250,7 @@ class PID(Node):
 
     def pose_to_psi(self, pose: Pose):
         return math.atan2(2*(pose.orientation.w*pose.orientation.z + pose.orientation.x*pose.orientation.y), 1 - 2*(pose.orientation.y*pose.orientation.y + pose.orientation.z*pose.orientation.z))
-    
+
     def subscribe_base_link(self, msg: Odometry):
         odometry_pose = msg.pose.pose
 
@@ -258,13 +258,13 @@ class PID(Node):
 
 
 def main():
-    rclpy.init() 
+    rclpy.init()
     pid = PID()
 
     # Use a multi-threaded executor
     executor = MultiThreadedExecutor(num_threads=8)
     if executor.add_node(pid):
-        
+
         try:
             executor.spin()
         finally:

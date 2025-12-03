@@ -40,13 +40,13 @@ def generate_launch_description():
     aruco_map_params = PathJoinSubstitution([
         get_package_share_directory("drone"),
         "params",
-        "test_circle_map.yaml",
+        "competition_map_config.yaml",
     ])
 
     pose_publusher_params = PathJoinSubstitution([
         get_package_share_directory("drone"),
         "params",
-        "test_circle_waypoints.yaml",
+        "waypoints.yaml",
     ])
 
     rviz2_node = Node(

@@ -32,7 +32,7 @@ class PosePublisherNode(Node):
         self.PUBLISH_PERIOD       = 0.5
 
         # Stability logic
-        self.STABLE_SAMPLES       = 10        # how many readings must be below thresholds
+        self.STABLE_SAMPLES       = 20        # how many readings must be below thresholds
 
         self.THRESH_X             = 0.0
         self.THRESH_Y             = 0.0

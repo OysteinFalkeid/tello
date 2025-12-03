@@ -3,7 +3,7 @@ tello/control/pose_publisher:
 
     thresh_x: 0.25
     thresh_y: 0.25
-    thresh_z: 0.15
+    thresh_z: 0.10
 
 
     thresh_total: 0.45
@@ -57,7 +57,7 @@ tello/control/pose_publisher:
         position:
           x: 2.7
           y: -0.25
-          z: 0.6
+          z: 0.4
         orientation:
           x: 0.0
           y: 0.0

@@ -161,11 +161,11 @@ class Estimator(Node):
                         T_drone_marker = self.markers_odom_detected[key]
 
                         # Marker-based drone pose in odom
-                        T_odom_drone_aruco = T_odom_marker @ tf_transformations.inverse_matrix(T_drone_marker)
+                        T_odom_drone_aruco =self.odometry_matrix @ (T_odom_marker @ tf_transformations.inverse_matrix(T_drone_marker))
                         pose_estimation_list.append(T_odom_drone_aruco)
 
                         # Difference between odom EKF pose and ArUco-based pose
-                        delta = tf_transformations.inverse_matrix(self.odometry_matrix) @ T_odom_drone_aruco
+                        delta = T_drone_marker @ tf_transformations.inverse_matrix(self.odometry_matrix)
                         error_list.append(delta)
 
 
@@ -186,7 +186,7 @@ class Estimator(Node):
                         [0,    0,    0,    10.0, 0,    0],
                         [0,    0,    0,    0,    10.0, 0],
                         [0,    0,    0,    0,    0,    10.0],
-                    ]) * max(1.0, pos_err * 4.0)).astype(float).flatten().tolist()
+                    ]) * max(1, pos_err * 2.0)).astype(float).flatten().tolist()
 
                     message = PoseWithCovarianceStamped()
                     message.header.frame_id = "odom"
