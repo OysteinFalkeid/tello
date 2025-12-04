@@ -7,7 +7,7 @@ from geometry_msgs.msg import TwistStamped, TwistWithCovarianceStamped, PoseWith
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Header, String
 from sensor_msgs.msg import Image, CameraInfo
-from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, ReliabilityPolicy, HistoryPolicy
 
 import os
 import sys
@@ -86,10 +86,16 @@ class API(Node):
 
         self.velocity_list = [np.array([[0.0,0.0,0.0],[0.0,0.0,0.0]]).T]
 
+        qos_image = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            history=HistoryPolicy.KEEP_LAST
+        )
+
         self.publisher_image = self.create_publisher(
-            msg_type=Image,
-            topic="camera/image",
-            qos_profile=QoSProfile(depth=10),
+            Image,
+            "camera/image",
+            qos_profile=qos_image,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
@@ -180,7 +186,7 @@ class API(Node):
 
         #ping hight from tello
         self.create_timer(
-            timer_period_sec=0.03,
+            timer_period_sec=0.1,
             callback=self.get_hight,
             callback_group=MutuallyExclusiveCallbackGroup()
         )

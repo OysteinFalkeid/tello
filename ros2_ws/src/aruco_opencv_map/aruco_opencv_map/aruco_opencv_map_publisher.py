@@ -54,7 +54,7 @@ class Map_publisher(Node):
 
         # publish map
         self.create_timer(
-             timer_period_sec=1,
+             timer_period_sec=0.1,
              callback=self.publish_map,
              callback_group=MutuallyExclusiveCallbackGroup()
         )
