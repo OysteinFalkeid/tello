@@ -159,7 +159,7 @@ class API(Node):
 
         #ping frame from tello
         self.create_timer(
-            timer_period_sec=0.08,
+            timer_period_sec=0.1,
             callback=self.get_frame,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -180,7 +180,7 @@ class API(Node):
 
         #ping hight from tello
         self.create_timer(
-            timer_period_sec=0.03,
+            timer_period_sec=0.5,
             callback=self.get_hight,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
