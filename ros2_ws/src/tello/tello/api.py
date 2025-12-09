@@ -106,21 +106,6 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
         
-        # self.publisher_acceleration = self.create_publisher(
-        #     msg_type=Imu,
-        #     topic="control/imu0_acceleration",
-        #     qos_profile=QoSProfile(depth=1),
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
-
-        # self.publisher_velocity = self.create_publisher(
-        #     msg_type=TwistWithCovarianceStamped,
-        #     # msg_type=TwistStamped,
-        #     topic="control/twist0_velocity",
-        #     qos_profile=QoSProfile(depth=1),
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
-        
         self.publisher_hight = self.create_publisher(
             msg_type=PoseWithCovarianceStamped,
             topic="control/pose1_hight",
@@ -170,20 +155,6 @@ class API(Node):
             callback_group=MutuallyExclusiveCallbackGroup()
         )
 
-        # #ping acceleration from tello
-        # self.create_timer(
-        #     timer_period_sec=0.01,
-        #     callback=self.get_acceleration,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
-
-        # #ping velocity from tello
-        # self.create_timer(
-        #     timer_period_sec=0.01,
-        #     callback=self.get_velocity,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
-
         #ping hight from tello
         self.create_timer(
             timer_period_sec=0.5,
@@ -201,10 +172,7 @@ class API(Node):
     def safe_check_frame(self, frame: np.ndarray):
         if frame is None:
             return False, "None frame"
-
-        # if not isinstance(frame, np.ndarray):
-        #     return False, "Not a numpy array"
-
+        
         if frame.dtype != np.uint8:
             return False, f"Invalid dtype {frame.dtype}"
 
@@ -225,7 +193,6 @@ class API(Node):
         if frame_status:
             frame = np.array(frame)
             self.frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-            # self.get_logger().info(f"{self.frame.shape}")
         else:
             self.get_logger().info(result)
         header = Header()
@@ -240,85 +207,13 @@ class API(Node):
         self.get_logger().info(F"Battery {self.battery}%")
         self.height = self.tello.get_height()
         self.get_logger().info(F"Height {self.height}")
-        # self.barometer = self.tello.get_barometer()
-        # self.get_logger().info(F"Barometer {self.barometer/100}m")
         self.temperature = self.tello.get_temperature()
         self.get_logger().info(F"Temperature {self.temperature}C")
         self.flight_time = self.tello.get_flight_time()
         self.get_logger().info(F"Flight_time {self.flight_time}")
         self.get_logger().info("---------------------------------------------")
 
-    def get_acceleration(self):
-        x = self.tello.get_acceleration_x() / 100.0
-        y = self.tello.get_acceleration_y() / -100.0
-        z = self.tello.get_acceleration_z() / 100.0
-
-        message = Imu()
-        message.header.frame_id = "base_link"
-        message.header.stamp = self.get_clock().now().to_msg()
-        message.linear_acceleration.x = x
-        message.linear_acceleration.y = y
-        message.linear_acceleration.z = z
-
-        message.linear_acceleration_covariance = np.array([
-            [1.0, 0.1, 0.1, 0.0,  0.0,  0.0],
-            [0.1, 1.0, 0.1, 0.0,  0.0,  0.0],
-            [0.1, 0.1, 1.0, 0.0,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.01,  0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.0,  0.01],
-        ]).flatten().tolist()
-
-        self.publisher_acceleration.publish(message)
-
-    def get_velocity(self):
-        x = self.tello.get_speed_x() / 100.0
-        y = self.tello.get_speed_y() / -100.0
-        z = self.tello.get_speed_z() / 100.0
-        
-        # self.velocity_list.append(np.array([[x, -y, z], [0, 0, 0]]).astype(float).T)
-
-
-        # velocity = np.array([[x, -y, z], [0, 0, 0]]).astype(float).T
-
-        # message = TwistWithCovarianceStamped()
-        # message.header.frame_id = "base_link"
-        # message.header.stamp = self.get_clock().now().to_msg()
-
-        # message.twist.twist.linear.x = velocity[0, 0]
-        # message.twist.twist.linear.y = velocity[1, 0]
-        # message.twist.twist.linear.z = velocity[2, 0]
-        # # message.twist.twist.angular.x = velocity[0, 1]
-        # # message.twist.twist.angular.y = velocity[1, 1]
-        # # message.twist.twist.angular.z = velocity[2, 1]        
-
-        message = TwistWithCovarianceStamped()
-        # message = TwistStamped()
-        message.header.frame_id = "base_link"
-        message.header.stamp = self.get_clock().now().to_msg()
-
-        message.twist.twist.linear.x = x
-        message.twist.twist.linear.y = y
-        message.twist.twist.linear.z = z
-        
-        message.twist.covariance = np.array([
-            [1.0, 0.1, 0.1, 0.0,  0.0,  0.1],
-            [0.1, 1.0, 0.1, 0.0,  0.0,  0.1],
-            [0.1, 0.1, 1.0, 0.0,  0.0,  0.1],
-            [0.0, 0.0, 0.0, 0.01, 0.0,  0.0],
-            [0.0, 0.0, 0.0, 0.0,  0.01, 0.0],
-            [0.1, 0.1, 0.1, 0.0,  0.0,  1.0],
-        ]).flatten().tolist()        
-        
-        # message.twist.linear.x = x
-        # message.twist.linear.y = y
-        # message.twist.linear.z = z
-        
-        if self.takeoff:
-            self.publisher_velocity.publish(message)
-
     def get_hight(self):
-        # z = self.tello.get_height() / 100.0
         z = self.tello.get_distance_tof() / 100.0
         if z > 0.01:
             message = PoseWithCovarianceStamped()

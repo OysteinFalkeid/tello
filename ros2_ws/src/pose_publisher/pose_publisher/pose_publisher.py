@@ -13,8 +13,6 @@ from ament_index_python.packages import get_package_share_directory
 import yaml
 
 
-
-
 class PosePublisherNode(Node):
     def __init__(self):
         super().__init__('pose_publisher', allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
@@ -67,19 +65,11 @@ class PosePublisherNode(Node):
             waypoint.pose = pose
             waypoint_list.append(waypoint)
 
-        # self.get_logger().error(f'Waypoints: {waypoint_list}')
-
-
         self.waypoint_msg_list = waypoint_list
-
 
         # Publisher for goal pose for the controller
         self.publisher_ = self.create_publisher(PoseStamped, self.GOAL_POSE_TOPIC, 10)
 
-        # # Load waypoints from YAML
-        # self.poses = self.load_waypoints()
-        # if not self.poses:
-        #     self.get_logger().error('No waypoints loaded. Node will still run but publish nothing useful.')
         self.current_index = 0
 
         # Keep track of last N "is stable" results
@@ -92,13 +82,6 @@ class PosePublisherNode(Node):
             self.pid_error_callback,
             10
         )
-
-        # self.cmd_sub = self.create_subscription(
-        #     TwistStamped,
-        #     self.CMD,
-        #     self.cmd_error_callback,
-        #     10
-        # )
 
         self.joy_sub = self.create_subscription(
             String,
@@ -185,79 +168,16 @@ class PosePublisherNode(Node):
         if is_stable:
             self.stable_flags.append(is_stable)
 
-        # Debugging
-        # self.get_logger().info(
-        #     f'pid_error: ({err_x:.3f}, {err_y:.3f}, {err_z:.3f}), '
-        #     f'dist={dist:.3f}, stable={is_stable}'
-        # )
-
         # Check if the last N samples are all stable
         if (len(self.stable_flags) >= self.STABLE_SAMPLES):
             if self.current_index > 0:
                 self.advance_waypoint()
-            # pass
-
-    # def cmd_error_callback(self, msg: TwistStamped):
-    #     """Store whether this error sample is within all thresholds."""
-    #     err_x = float(msg.twist.linear.x)
-    #     err_y = float(msg.twist.linear.y)
-    #     err_z = float(msg.twist.linear.z)
-    #     # Per-axis
-    #     within_axes = (
-    #         abs(err_x) < self.THRESH_X and
-    #         abs(err_y) < self.THRESH_Y and
-    #         abs(err_z) < self.THRESH_Z
-    #     )
-
-    #     # Total distance
-    #     dist = math.sqrt(err_x**2 + err_y**2 + err_z**2)
-    #     within_total = dist < self.THRESH_TOTAL
-
-    #     is_stable = within_axes and within_total
-    #     self.stable_flags.append(is_stable)
-
-    #     # Debugging
-    #     # self.get_logger().info(
-    #     #     f'pid_error: ({err_x:.3f}, {err_y:.3f}, {err_z:.3f}), '
-    #     #     f'dist={dist:.3f}, stable={is_stable}'
-    #     # )
-
-    #     # Check if the last N samples are all stable
-    #     if (
-    #         len(self.stable_flags) == self.STABLE_SAMPLES and
-    #         all(self.stable_flags)
-    #     ):
-    #         self.advance_waypoint()
-    
 
     def manual_next_waypoint(self, msg: String):
         self.advance_waypoint()
 
     def timer_callback(self):
         """Publish current waypoint pose repeatedly."""
-        # if not self.poses:
-        #     # nothing to do
-        #     return
-
-        # # Index to last waypoint once finished
-        # idx = min(self.current_index, len(self.poses) - 1)
-        # wp = self.poses[idx]
-
-        # msg = PoseStamped()
-        # msg.header.stamp = self.get_clock().now().to_msg()
-        # msg.header.frame_id = FRAME_ID
-
-        # msg.pose.position.x = wp['x']
-        # msg.pose.position.y = wp['y']
-        # msg.pose.position.z = wp['z']
-
-        # # Convert yaw [deg] to quaternion
-        # yaw_rad = math.radians(wp['yaw_deg'])
-        # msg.pose.orientation.x = 0.0
-        # msg.pose.orientation.y = 0.0
-        # msg.pose.orientation.z = math.sin(yaw_rad / 2.0)
-        # msg.pose.orientation.w = math.cos(yaw_rad / 2.0)
-
         msg = self.waypoint_msg_list[self.current_index]
         msg.header.stamp = self.get_clock().now().to_msg()
 
