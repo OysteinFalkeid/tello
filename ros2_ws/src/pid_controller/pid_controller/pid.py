@@ -25,10 +25,6 @@ class PID(Node):
     def __init__(self):
         super().__init__("PID")
 
-        self.x_test = 0.1
-        self.z_test = 0.0
-        
-        
         self.goal_pose = PoseStamped()
         self.goal_pose.header.frame_id = "odom"
         self.goal_pose.header.stamp = self.get_clock().now().to_msg()
@@ -47,24 +43,15 @@ class PID(Node):
         self.twist_array_I = np.array([0, 0, 0, 0]).astype(float)
         self.filter_index= 0
 
-        ##########
-        self.z_low = 0.5
-        self.z_high = 0.3
-        self.z_toggle = False
-
         # Gains per axis: [x, y, z, yaw]
-        self.Kp = np.array([0.15, 0.15, 0.5, 0.8], dtype=float)
+        self.Kp = np.array([0.2, 0.2, 0.8, 0.8], dtype=float)
         self.Kd = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)
-        # self.Kp = np.array([0.00, 0.00, 1.5, 0.0], dtype=float)
-        # self.Kd = np.array([0.00, 0.00, 0.2, 0.0], dtype=float)
-        self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)  # start with no Ki in x,y,yaw 
-        # z between 110 and 130 isntead of 70 to 90
+        self.Ki = np.array([0.00, 0.00, 0.0, 0.0], dtype=float)  
 
         self.error_prev = np.zeros(4, dtype=float)
         self.error_int  = np.zeros(4, dtype=float)
 
         self.u_max = np.array([0.2, 0.2, 0.2, 0.2], dtype=float)  # cmd_vel limits
-        ##########
 
         self.wait_for_transform("odom", "base_link")
         self.transform = self.tf_buffer.lookup_transform(
@@ -73,7 +60,6 @@ class PID(Node):
             time=rclpy.time.Time()
         )
 
-
         self.create_subscription(
             msg_type=PoseStamped,
             topic="goal_pose",
@@ -81,12 +67,6 @@ class PID(Node):
             callback_group=MutuallyExclusiveCallbackGroup(),
             qos_profile=QoSProfile(depth=10),
         )
-
-        # self.create_timer(
-        #     timer_period_sec=5,
-        #     callback=self.test_pid,
-        #     callback_group=MutuallyExclusiveCallbackGroup()
-        # )
 
         self.create_subscription(
             msg_type=Odometry,
@@ -105,7 +85,7 @@ class PID(Node):
 
         self.pid_error_pub = self.create_publisher(
             PoseStamped,
-            "pid_error",  # this becomes /tello/control/pid_error if the node has that namespace
+            "pid_error",
             QoSProfile(depth=10),
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -181,31 +161,6 @@ class PID(Node):
         # error in base_link frame
         error = self.twist_array  # [ex, ey, ez, epsi]
 
-        # -----------------------
-        # error in base_link frame
-        error = self.twist_array  # [ex, ey, ez, epsi]
-
-        deadband = np.array([0.05, 0.05, 0.05, 0.03], dtype=float)
-        for i in range(4):
-            if abs(error[i]) < deadband[i]:
-                error[i] = 0.0
-
-        # # publish error as PoseStamped
-        # err_msg = PoseStamped()
-        # err_msg.header.stamp = msg.header.stamp
-        # err_msg.header.frame_id = "base_link"
-
-        # err_msg.pose.position.x = float(error[0])
-        # err_msg.pose.position.y = float(error[1])
-        # err_msg.pose.position.z = float(error[2])
-
-        # # stash yaw error in orientation.z (or wherever you like)
-        # err_msg.pose.orientation.z = float(error[3])
-        # err_msg.pose.orientation.w = 1.0
-
-        # self.pid_error_pub.publish(err_msg)
-
-
         # time step
         sec, nanosec = self.get_clock().now().seconds_nanoseconds()
         t_now = sec + nanosec * 1e-9
@@ -232,13 +187,34 @@ class PID(Node):
 
         # I with anti-windup
         self.error_int += error * dt
-        # clamp integral
         self.error_int = np.clip(self.error_int, -0.2, 0.2)
         I = self.Ki * self.error_int
 
         u = P + D + I
 
-        # saturate per axis
+        # --- Deadzone handling ---
+        # if |error| <= e_arr: axis is "there" -> zero command
+        # else: if |u| is below actuator deadzone, bump it up
+
+        e_arr = np.array([0.02, 0.02, 0.02, 0.02], dtype=float)  # "there" threshold
+        u_dead = np.array([0.05, 0.05, 0.05, 0.08], dtype=float)  # min useful cmd per axis
+
+        for i in range(4):
+            mag_e = abs(error[i])
+
+            if mag_e <= e_arr[i]:
+                # inside 2 cm / small yaw -> stop and reset integral
+                u[i] = 0.0
+                self.error_int[i] = 0.0
+            else:
+                # we are NOT at the target: make sure command beats the deadzone
+                mag_u = abs(u[i])
+                if mag_u < u_dead[i]:
+                    # use sign from u if nonzero, otherwise from error
+                    direction = u[i] if mag_u > 1e-6 else error[i]
+                    u[i] = math.copysign(u_dead[i], direction)
+
+        # global saturation per axis
         u = np.clip(u, -self.u_max, self.u_max)
 
         # build message
@@ -254,75 +230,11 @@ class PID(Node):
         self.publisher_cmd_vel.publish(message)
 
 
-        # self.twist_array_P = self.twist_array
-        # # self.twist_array_P = np.array([x, y, z, psi]).astype(float)
-        # # self.twist_array_D = (self.twist_array_1 - self.twist_array) * self.delta_time
-        # # self.twist_array_I = self.twist_array + self.twist_array_I * self.delta_time
-
-        # # for i, value in enumerate(self.twist_array_I):
-        # #     if value > 0.2:
-        # #         self.twist_array_I[i] = 0.2
-        # #     elif value < -0.2:
-        # #         self.twist_array_I[i] = -0.2
-
-        # self.twist_array_PID = self.twist_array_P * 0.15 * 2 # + self.twist_array_D * 0.04# + self.twist_array_I * 0.12 
-
-        # for i, value in enumerate(self.twist_array_PID):
-        #     if value > 0.8:
-        #         self.twist_array_PID[i] = 0.8
-        #     elif value < -0.8:
-        #         self.twist_array_PID[i] = -0.8
-        
-        # # self.get_logger().info(f"{self.twist_array_PID}")
-        # message = TwistStamped()
-        # message.header.frame_id = "base_link"
-        # message.header.stamp = msg.header.stamp
-
-        # message.twist.linear.x = self.twist_array_PID[0]
-        # message.twist.linear.y = self.twist_array_PID[1]
-        # message.twist.linear.z = self.twist_array_PID[2]*2
-
-        # message.twist.angular.z = self.twist_array_PID[3]*2
-
-        # self.publisher_cmd_vel.publish(message)
-
-        # self.twist_array_1 = self.twist_array
-
     def pose_to_psi(self, pose: Pose):
         return math.atan2(2*(pose.orientation.w*pose.orientation.z + pose.orientation.x*pose.orientation.y), 1 - 2*(pose.orientation.y*pose.orientation.y + pose.orientation.z*pose.orientation.z))
     
     def subscribe_base_link(self, msg: Odometry):
         odometry_pose = msg.pose.pose
-
-    # def test_pid(self):
-    #     self.goal_pose = PoseStamped()
-    #     self.goal_pose.header.frame_id = "odom"
-    #     self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-    #     self.x_test = self.x_test * -1
-    #     self.z_test = self.z_test * -1
-    #     self.goal_pose.pose.position.x = self.x_test
-    #     self.goal_pose.pose.position.z = 1.0 #self.z_test
-
-    def test_pid(self):
-        self.goal_pose = PoseStamped()
-        self.goal_pose.header.frame_id = "odom"
-        self.goal_pose.header.stamp = self.get_clock().now().to_msg()
-
-        if self.z_toggle:
-            z_goal = self.z_low   # 0.8 m
-        else:
-            z_goal = self.z_high  # 0.9 m
-
-        self.z_toggle = not self.z_toggle
-
-        self.goal_pose.pose.position.x = 0.0
-        self.goal_pose.pose.position.y = 0.0
-        self.goal_pose.pose.position.z = z_goal
-        self.goal_pose.pose.orientation.w = 1.0
-
-        self.get_logger().info(f"New Z step goal: {z_goal:.2f} m")
-
-
 
 
 def main():

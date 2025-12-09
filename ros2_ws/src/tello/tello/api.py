@@ -43,6 +43,7 @@ class API(Node):
         super().__init__("API")
 
         self.takeoff = False
+        self.last_cmd_time = self.get_clock().now()  # <-- add this
 
         third_party = os.path.join(get_package_share_directory('tello'), 'third_party')
 
@@ -89,9 +90,14 @@ class API(Node):
         self.publisher_image = self.create_publisher(
             msg_type=Image,
             topic="camera/image",
-            qos_profile=QoSProfile(depth=10),
+            qos_profile=QoSProfile(
+                depth=1,
+                reliability=ReliabilityPolicy.BEST_EFFORT,
+                durability=DurabilityPolicy.VOLATILE,
+            ),
             callback_group=MutuallyExclusiveCallbackGroup()
         )
+
 
         self.publisher_camera_info = self.create_publisher(
             msg_type=CameraInfo,
@@ -180,7 +186,7 @@ class API(Node):
 
         #ping hight from tello
         self.create_timer(
-            timer_period_sec=0.03,
+            timer_period_sec=0.5,
             callback=self.get_hight,
             callback_group=MutuallyExclusiveCallbackGroup()
         )
@@ -333,8 +339,11 @@ class API(Node):
             self.publisher_hight.publish(message)
 
     def subscribe_twist(self, msg: TwistStamped):
-
-        # self.get_logger().info("Twist")
+        # Throttle: send max 10 Hz
+        now = self.get_clock().now()
+        if (now - self.last_cmd_time).nanoseconds < 100_000_000:  # 0.1 s
+            return
+        self.last_cmd_time = now
 
         left_right = int(msg.twist.linear.y * -100)
         forward_backward = int(msg.twist.linear.x * 100)
@@ -347,7 +356,8 @@ class API(Node):
                 forward_backward_velocity=forward_backward,
                 up_down_velocity=up_down,
                 yaw_velocity=yaw
-            )
+        )
+
 
     def takeoff_land(self, msg: String):
         self.get_logger().info(f"{msg.data}")
